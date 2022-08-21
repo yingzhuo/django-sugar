@@ -153,7 +153,26 @@ class RandomUUIDTokenGenerator(TokenGenerator):
 
     生成随机UUID作为令牌
     """
+
     remove_uuid_hyphen = False
 
     def generate_token(self, user, **kwargs):
         return string_tool.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class TokenBasedUserFinder(object, metaclass=abc.ABCMeta):
+    """
+    通过token获取用户实例的组件
+    """
+
+    @abc.abstractmethod
+    def get_user_by_token(self, token, **kwargs):
+        """
+        从令牌中获取用户信息
+        :param token: 令牌
+        :param kwargs: 其他参数
+        :return: 用户信息
+        """
