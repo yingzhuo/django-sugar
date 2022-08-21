@@ -14,19 +14,19 @@ class ReflectionComponentMixin(object):
     反射特质
     """
 
-    def get_attribute(self, attr_name, raise_error=False):
+    def get_attribute(self, attr_name, /, *, raise_error=False, error_msg=None):
         attr = self.__getattribute__(attr_name)
         if attr is not None:
             return attr
 
         if raise_error:
-            msg = "%s attribute not found" % (attr_name,)
+            msg = error_msg or "%s attribute not found" % (attr_name,)
             raise TypeError(msg)
         else:
             return None
 
-    def get_callable(self, attr_name, raise_error=False):
-        attr = self.get_attribute(attr_name, raise_error)
+    def get_callable(self, attr_name, /, *, raise_error=False, error_msg=None):
+        attr = self.get_attribute(attr_name, raise_error=raise_error)
 
         if not callable(attr):
             attr = None
@@ -35,7 +35,7 @@ class ReflectionComponentMixin(object):
             return attr
 
         if raise_error:
-            msg = "%s callable attribute not found" % (attr_name,)
+            msg = error_msg or "%s callable attribute not found" % (attr_name,)
             raise TypeError(msg)
         else:
             return None
