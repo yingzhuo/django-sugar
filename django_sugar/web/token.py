@@ -148,6 +148,11 @@ class TokenGenerator(object, metaclass=abc.ABCMeta):
 
 
 class RandomUUIDTokenGenerator(TokenGenerator):
+    """
+    令牌生成器具体实现
+
+    生成随机UUID作为令牌
+    """
     remove_uuid_hyphen = False
 
     def generate_token(self, user, **kwargs):

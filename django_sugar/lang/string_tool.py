@@ -12,27 +12,25 @@ import base64
 import uuid
 
 
-def is_empty(string):
-    if string is None:
-        return True
-    return string == ''
+def is_empty_or_none(string):
+    return not string
 
 
-def is_blank(string):
+def is_blank_or_none(string):
     if string is None:
         return True
     return string.strip() == ''
 
 
 def empty_to_none(string):
-    if is_empty(string):
+    if is_empty_or_none(string):
         return None
     else:
         return string
 
 
 def blank_to_none(string):
-    if is_blank(string):
+    if is_blank_or_none(string):
         return None
     else:
         return string

@@ -12,7 +12,7 @@ class ReflectionComponentMixin(object):
     """
     反射特质
 
-    混入此特质的组件可以使用便利性的方法
+    混入此特质的组件可以使用便利性的方法。
     """
 
     def get_attribute(self, attr_name, *, raise_error=False, error_msg=None):
