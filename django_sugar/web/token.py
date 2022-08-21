@@ -122,3 +122,24 @@ class BasicTokenResolver(HeaderTokenResolver):
 
     header_name = 'Authorization'
     token_value_prefix = 'Basic '
+
+    def resolve_username_and_password(self, request, **kwargs):
+        token = self.resolve_token(request, **kwargs)
+        if token:
+            uap = string_tool.base64_standard_decode(token).split(':', 2)
+            return uap[0], uap[1]
+        else:
+            return None, None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+class TokenGenerator(object, metaclass=abc.ABCMeta):
+
+    def generate_token(self, user, **kwargs):
+        """
+
+        :param user:
+        :param kwargs:
+        :return:
+        """

@@ -9,6 +9,7 @@
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
 import base64
+import uuid
 
 
 def is_empty(string):
@@ -69,3 +70,18 @@ def base64_urlsafe_decode(base64_string, charset='utf-8'):
     base64_bytes = base64_string.encode(charset)
     string_bytes = base64.urlsafe_b64decode(base64_bytes)
     return string_bytes.decode(charset)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def random_uuid36():
+    return str(uuid.uuid4())
+
+
+def random_uuid32():
+    return random_uuid36().replace('-', '')
+
+
+def random_uuid(*, remove_hyphen=False):
+    return random_uuid32() if remove_hyphen else random_uuid36()
