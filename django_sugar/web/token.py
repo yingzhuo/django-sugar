@@ -52,15 +52,12 @@ class CompositeTokenResolver(TokenResolver):
                 ret = token_resolver.resolve_token(request, kwargs)
                 if ret is not None:
                     return ret
-            except Exception as exc:
+            except Exception:
                 continue
         return None
 
     def get_token_resolvers(self):
-        if self.token_resolver_classes:
-            return [x() for x in self.token_resolver_classes]
-        else:
-            return []
+        return [x() for x in self.token_resolver_classes]
 
 
 class QueryTokenResolver(TokenResolver):
@@ -135,11 +132,23 @@ class BasicTokenResolver(HeaderTokenResolver):
 # ----------------------------------------------------------------------------------------------------------------------
 
 class TokenGenerator(object, metaclass=abc.ABCMeta):
+    """
+    令牌生成器
+
+    本类是抽象的。
+    """
 
     def generate_token(self, user, **kwargs):
         """
-
-        :param user:
-        :param kwargs:
-        :return:
+        为用户生成令牌
+        :param user: 用户对象
+        :param kwargs: 其他参数
+        :return: 令牌字符串
         """
+
+
+class RandomUUIDTokenGenerator(TokenGenerator):
+    remove_uuid_hyphen = False
+
+    def generate_token(self, user, **kwargs):
+        return string_tool.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
