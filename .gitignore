@@ -11,3 +11,6 @@ db.sqlite3
 *.bak
 *.tmp
 *.temp
+
+# source code of testing
+django_sugar_test/

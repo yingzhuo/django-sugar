@@ -43,6 +43,9 @@ class CompositeTokenResolver(TokenResolver):
     def __init__(self, **kwargs):
         self.token_resolver_classes = kwargs.get('token_resolver_classes', [])
 
+    def __len__(self):
+        return len(self.token_resolver_classes)
+
     def resolve_token(self, request, **kwargs):
         for token_resolver in self.get_token_resolvers():
             try:
@@ -54,7 +57,10 @@ class CompositeTokenResolver(TokenResolver):
         return None
 
     def get_token_resolvers(self):
-        return [x() for x in self.token_resolver_classes]
+        if self.token_resolver_classes:
+            return [x() for x in self.token_resolver_classes]
+        else:
+            return []
 
 
 class QueryTokenResolver(TokenResolver):
