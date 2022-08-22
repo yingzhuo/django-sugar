@@ -38,10 +38,11 @@ class CompositeTokenResolver(TokenResolver):
     代理其他类型令牌解析器，并将第一个能正确解析出令牌的解析的结果返回。
     """
 
-    token_resolver_classes = []
+    token_resolver_classes = None
 
     def __init__(self, **kwargs):
-        self.token_resolver_classes = kwargs.get('token_resolver_classes', [])
+        if self.token_resolver_classes is None:
+            self.token_resolver_classes = kwargs.get('token_resolver_classes', [])
 
     def __len__(self):
         return len(self.token_resolver_classes)
@@ -67,7 +68,11 @@ class QueryTokenResolver(TokenResolver):
     从请求参数中获取令牌数据
     """
 
-    token_parameter_name = '_token'
+    token_parameter_name = None
+
+    def __init__(self, **kwargs):
+        if self.token_parameter_name is None:
+            self.token_parameter_name = kwargs.get('token_parameter_name', '_token')
 
     def resolve_token(self, request, **kwargs):
         token_value = request.GET.get(self.token_parameter_name, None)
@@ -83,10 +88,17 @@ class HeaderTokenResolver(TokenResolver):
     """
 
     # 请求头名
-    header_name = 'X-Token'
+    header_name = None
 
     # 期望的令牌的前缀
-    token_value_prefix = ''
+    token_value_prefix = None
+
+    def __init__(self, **kwargs):
+        if self.header_name is None:
+            self.header_name = kwargs.get('header_name', 'Authorization')
+
+        if self.token_value_prefix is None:
+            self.token_value_prefix = kwargs.get('token_value_prefix', 'Token ')
 
     def resolve_token(self, request, **kwargs):
         token_value = request.headers.get(self.header_name, None)
@@ -127,6 +139,22 @@ class BasicTokenResolver(HeaderTokenResolver):
             return uap[0], uap[1]
         else:
             return None, None
+
+
+class FixedTokenResolver(TokenResolver):
+    """
+    令牌解析器具体实现
+
+    总是解析出固定的令牌
+    """
+    fixed_token = None
+
+    def __init__(self, **kwargs):
+        if self.fixed_token is None:
+            self.fixed_token = kwargs.get('fixed_token', None)
+
+    def resolve_token(self, request, **kwargs):
+        return self.fixed_token
 
 
 class AlwaysNoneTokenResolver(TokenResolver):

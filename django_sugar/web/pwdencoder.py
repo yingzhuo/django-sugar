@@ -25,9 +25,9 @@ _SUPPORTED_ALGORITHM = [
 class PasswordEncoder(object, metaclass=abc.ABCMeta):
 
     def __new__(cls, *args, **kwargs):
-        encoder = object.__new__(CompositePasswordEncoder)
-        encoder.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
-        return encoder
+        e = object.__new__(CompositePasswordEncoder)
+        e.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
+        return e
 
     @abc.abstractmethod
     def encode_password(self, raw_password):
@@ -53,7 +53,10 @@ class CompositePasswordEncoder(PasswordEncoder):
     encoding_algorithm = None
 
     def __init__(self, **kwargs):
-        self.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
+        if self.encoding_algorithm is None:
+            self.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
+
+        self._check_algorithm()
 
     def encode_password(self, raw_password):
         self._check_algorithm()
