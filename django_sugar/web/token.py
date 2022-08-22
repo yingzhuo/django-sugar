@@ -129,6 +129,17 @@ class BasicTokenResolver(HeaderTokenResolver):
             return None, None
 
 
+class AlwaysNoneTokenResolver(TokenResolver):
+    """
+    令牌解析器具体实现
+
+    永远不能解析出令牌
+    """
+
+    def resolve_token(self, request, **kwargs):
+        return None
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 class TokenGenerator(object, metaclass=abc.ABCMeta):

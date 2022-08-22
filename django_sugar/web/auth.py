@@ -30,13 +30,14 @@ class Authenticator(object, metaclass=abc.ABCMeta):
         return '403 Permission Denied' if request.user else '401 Unauthenticated'
 
 
-class TokenBasedAuthenticator(Authenticator, reflection.ReflectionComponentMixin):
+class TokenBasedAuthenticator(Authenticator):
 
     def authenticate(self, request):
 
-        resolve_token = self.get_callable('resolve_token',
-                                          raise_error=True,
-                                          error_msg='forgot TokenResolver mixin?')
+        resolve_token = reflection.get_callable(self,
+                                                'resolve_token',
+                                                raise_error=True,
+                                                error_msg='forgot TokenResolver mixin?')
 
         try:
             token = resolve_token(request)
@@ -46,9 +47,10 @@ class TokenBasedAuthenticator(Authenticator, reflection.ReflectionComponentMixin
         if not token:
             return None
 
-        get_user_by_token = self.get_callable('get_user_by_token',
-                                              raise_error=True,
-                                              error_msg='forgot TokenBasedUserFinder mixin?')
+        get_user_by_token = reflection.get_callable(self,
+                                                    'get_user_by_token',
+                                                    raise_error=True,
+                                                    error_msg='forgot TokenBasedUserFinder mixin?')
 
         try:
             user = get_user_by_token(token)
