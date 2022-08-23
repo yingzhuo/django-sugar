@@ -13,7 +13,7 @@ import abc
 from django_sugar.lang import codec
 
 # 支持的加密算法
-_SUPPORTED_ALGORITHM = [
+_SUPPORTED_ALGORITHMS = [
     'noop',
     'md5',
     'sha1',
@@ -97,5 +97,5 @@ class CompositePasswordEncoder(PasswordEncoder):
             return raw_password == encoded_password
 
     def _check_algorithm(self):
-        if self.encoding_algorithm not in _SUPPORTED_ALGORITHM:
+        if self.encoding_algorithm not in _SUPPORTED_ALGORITHMS:
             raise ValueError("'%s' algorithm is not supported")

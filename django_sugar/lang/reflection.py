@@ -8,6 +8,8 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
+from django_sugar.lang import typetest
+
 
 def get_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
     try:
@@ -20,10 +22,10 @@ def get_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
             return None
 
 
-def get_callable(obj, attr_name, *, raise_error=False, error_msg=None):
+def get_callable_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
     attr = get_attribute(obj, attr_name, raise_error=False)
 
-    if callable(attr):
+    if typetest.is_callable(attr):
         return attr
     elif raise_error:
         msg = error_msg or ("object has no callable attribute '%s'" % attr_name)

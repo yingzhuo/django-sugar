@@ -34,10 +34,10 @@ class TokenBasedAuthenticator(Authenticator):
 
     def authenticate(self, request):
 
-        resolve_token = reflection.get_callable(self,
-                                                'resolve_token',
-                                                raise_error=True,
-                                                error_msg='forgot TokenResolver mixin?')
+        resolve_token = reflection.get_callable_attribute(self,
+                                                          'resolve_token',
+                                                          raise_error=True,
+                                                          error_msg='forgot TokenResolver mixin?')
 
         # noinspection PyBroadException
         try:
@@ -48,10 +48,10 @@ class TokenBasedAuthenticator(Authenticator):
         if not token:
             return None
 
-        get_user_by_token = reflection.get_callable(self,
-                                                    'get_user_by_token',
-                                                    raise_error=True,
-                                                    error_msg='forgot TokenBasedUserFinder mixin?')
+        get_user_by_token = reflection.get_callable_attribute(self,
+                                                              'get_user_by_token',
+                                                              raise_error=True,
+                                                              error_msg='forgot TokenBasedUserFinder mixin?')
 
         # noinspection PyBroadException
         try:
