@@ -10,11 +10,11 @@
 # ----------------------------------------------------------------------------------------------------------------------
 from setuptools import setup, find_packages
 
-from django_sugar import version
+import django_sugar
 
 setup(
     name='django_sugar',
-    version=version.VERSION,
+    version=django_sugar.VERSION,
     author='应卓',
     author_email='yingzhor@gmail.com',
     url=r'https://github.com/yingzhuo/django-sugar',
