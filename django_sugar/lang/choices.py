@@ -23,21 +23,30 @@ class ChoicesType(object):
         if isinstance(cls, typing.Iterable):
             return [(m.name, m.value) for m in cls]
         else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
+            raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
     def contains_name(cls, name):
         if isinstance(cls, typing.Iterable):
             return name in [m.name for m in cls]
         else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
+            raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
     def contains_value(cls, value):
         if isinstance(cls, typing.Iterable):
             return value in [m.value for m in cls]
         else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
+            raise TypeError("'%s' isn't iterable" % cls.__name__)
+
+    @classmethod
+    def parse(cls, name_or_value):
+        if isinstance(cls, typing.Iterable):
+            for m in cls:
+                if m.name == name_or_value or m.value == name_or_value:
+                    return m
+        else:
+            raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
     def parse_from_name(cls, name):
@@ -47,7 +56,7 @@ class ChoicesType(object):
                     return m
             return None
         else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
+            raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
     def parse_from_value(cls, value):
@@ -57,13 +66,4 @@ class ChoicesType(object):
                     return m
             return None
         else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
-
-    @classmethod
-    def parse(cls, name_or_value):
-        if isinstance(cls, typing.Iterable):
-            for m in cls:
-                if m.name == name_or_value or m.value == name_or_value:
-                    return m
-        else:
-            raise TypeError("'%s' isn't iterable." % cls.__name__)
+            raise TypeError("'%s' isn't iterable" % cls.__name__)

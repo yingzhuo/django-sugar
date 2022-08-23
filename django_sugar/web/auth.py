@@ -39,6 +39,7 @@ class TokenBasedAuthenticator(Authenticator):
                                                 raise_error=True,
                                                 error_msg='forgot TokenResolver mixin?')
 
+        # noinspection PyBroadException
         try:
             token = resolve_token(request)
         except Exception:
@@ -52,6 +53,7 @@ class TokenBasedAuthenticator(Authenticator):
                                                     raise_error=True,
                                                     error_msg='forgot TokenBasedUserFinder mixin?')
 
+        # noinspection PyBroadException
         try:
             user = get_user_by_token(token)
         except Exception:

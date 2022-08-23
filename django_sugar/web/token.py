@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import abc
 
-from django_sugar.lang import string_tool
+from django_sugar.lang import strtool, base64, uuid, codec
 
 
 class TokenResolver(object, metaclass=abc.ABCMeta):
@@ -49,6 +49,7 @@ class CompositeTokenResolver(TokenResolver):
 
     def resolve_token(self, request, **kwargs):
         for token_resolver in self.get_token_resolvers():
+            # noinspection PyBroadException
             try:
                 ret = token_resolver.resolve_token(request, kwargs)
                 if ret is not None:
@@ -76,7 +77,7 @@ class QueryTokenResolver(TokenResolver):
 
     def resolve_token(self, request, **kwargs):
         token_value = request.GET.get(self.token_parameter_name, None)
-        token_value = string_tool.blank_to_none(token_value)
+        token_value = strtool.blank_to_none(token_value)
         return token_value
 
 
@@ -102,7 +103,7 @@ class HeaderTokenResolver(TokenResolver):
 
     def resolve_token(self, request, **kwargs):
         token_value = request.headers.get(self.header_name, None)
-        token_value = string_tool.blank_to_none(token_value)
+        token_value = strtool.blank_to_none(token_value)
 
         if token_value is None or not token_value.startswith(self.token_value_prefix):
             # 找不到此请求头或者值不以指定的前缀开始
@@ -135,7 +136,7 @@ class BasicTokenResolver(HeaderTokenResolver):
     def resolve_username_and_password(self, request, **kwargs):
         token = self.resolve_token(request, **kwargs)
         if token:
-            uap = string_tool.base64_standard_decode(token).split(':', 2)
+            uap = base64.base64_standard_decode(token).split(':', 2)
             return uap[0], uap[1]
         else:
             return None, None
@@ -196,7 +197,18 @@ class RandomUUIDTokenGenerator(TokenGenerator):
     remove_uuid_hyphen = False
 
     def generate_token(self, user, **kwargs):
-        return string_tool.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
+        return uuid.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
+
+
+class MD5TokenGenerator(TokenGenerator):
+    """
+    令牌生成器具体实现
+
+    使用MD5信息摘要发生成令牌
+    """
+
+    def generate_token(self, user, **kwargs):
+        return codec.md5(str(user))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
