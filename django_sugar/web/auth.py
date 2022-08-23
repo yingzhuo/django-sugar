@@ -16,6 +16,8 @@ from django_sugar.lang import reflection
 class Authenticator(object, metaclass=abc.ABCMeta):
     """
     认证器
+
+    本类型为抽象类。
     """
 
     @abc.abstractmethod

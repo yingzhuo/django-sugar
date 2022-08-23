@@ -39,3 +39,10 @@ def none_to_empty(string):
         return ''
     else:
         return string
+
+
+def equals(string1, string2, *, ignore_cases=False):
+    if ignore_cases:
+        return string1.lower() == string2.lower()
+    else:
+        return string1 == string2

@@ -10,6 +10,8 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import typing
 
+from django_sugar.lang import strtool
+
 
 class ChoicesType(object):
     """
@@ -40,19 +42,19 @@ class ChoicesType(object):
             raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
-    def parse(cls, name_or_value):
+    def parse(cls, name_or_value, *, ignore_cases=True):
         if isinstance(cls, typing.Iterable):
             for m in cls:
-                if m.name == name_or_value or m.value == name_or_value:
+                if strtool.equals(m.name, name_or_value, ignore_cases=ignore_cases) or m.value == name_or_value:
                     return m
         else:
             raise TypeError("'%s' isn't iterable" % cls.__name__)
 
     @classmethod
-    def parse_from_name(cls, name):
+    def parse_from_name(cls, name, *, ignore_cases=True):
         if isinstance(cls, typing.Iterable):
             for m in cls:
-                if m.name == name:
+                if strtool.equals(m.name, name, ignore_cases=ignore_cases):
                     return m
             return None
         else:
