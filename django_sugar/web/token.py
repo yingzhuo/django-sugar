@@ -9,8 +9,9 @@
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
 import abc
+import string
 
-from django_sugar.lang import strtool, base64, uuid, codec
+from django_sugar.lang import strtool, base64, uuid, codec, random
 
 
 class TokenResolver(object, metaclass=abc.ABCMeta):
@@ -209,6 +210,20 @@ class MD5TokenGenerator(TokenGenerator):
 
     def generate_token(self, user, **kwargs):
         return codec.md5(str(user))
+
+
+class SimpleRandomStringTokenGenerator(TokenGenerator):
+    """
+    令牌生成器具体实现
+
+    生成简单的随机字符串
+    """
+
+    length = 36
+    chars_to_choice = string.ascii_letters
+
+    def generate_token(self, user, **kwargs):
+        return random.random_string(self.length, chars=self.chars_to_choice)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
