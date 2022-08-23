@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='django_sugar',
@@ -6,7 +6,7 @@ setup(
     author='应卓',
     author_email='yingzhor@gmail.com',
     url=r'https://github.com/yingzhuo/django-sugar',
-    packages=find_packages(),
+    packages=['django_sugar'],
     requires=[
     ],
 )
