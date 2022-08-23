@@ -12,18 +12,46 @@ import hashlib
 
 
 def md5(string, *, charset='utf-8'):
+    """
+    md5哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
     return hashlib.md5(string.encode(encoding=charset)).hexdigest()
 
 
 def sha1(string, *, charset='utf-8'):
+    """
+    sha1哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
     return hashlib.sha1(string.encode(encoding=charset)).hexdigest()
 
 
 def sha224(string, *, charset='utf-8'):
+    """
+    sha224哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
     return hashlib.sha224(string.encode(encoding=charset)).hexdigest()
 
 
 def sha256(string, *, charset='utf-8'):
+    """
+    sha256哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
     return hashlib.sha256(string.encode(encoding=charset)).hexdigest()
 
 

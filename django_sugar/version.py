@@ -8,17 +8,6 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-from setuptools import setup, find_packages
 
-from django_sugar import version
-
-setup(
-    name='django_sugar',
-    version=version.VERSION,
-    author='应卓',
-    author_email='yingzhor@gmail.com',
-    url=r'https://github.com/yingzhuo/django-sugar',
-    packages=find_packages(),
-    requires=[
-    ],
-)
+# 本软件当前版本
+VERSION = '0.1.0'
