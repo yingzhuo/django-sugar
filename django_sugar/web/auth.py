@@ -33,6 +33,11 @@ class Authenticator(object, metaclass=abc.ABCMeta):
 
 
 class TokenBasedAuthenticator(Authenticator):
+    # 解析令牌时发生异常是否抛出
+    raise_if_token_resolving_error = True
+
+    # 从令牌中找到用户实体时发生异常是否抛出
+    raise_if_user_finding_error = True
 
     def authenticate(self, request):
 
@@ -45,7 +50,10 @@ class TokenBasedAuthenticator(Authenticator):
         try:
             token = resolve_token(request)
         except Exception:
-            token = None
+            if self.raise_if_token_resolving_error:
+                raise
+            else:
+                token = None
 
         if not token:
             return None
@@ -59,7 +67,10 @@ class TokenBasedAuthenticator(Authenticator):
         try:
             user = get_user_by_token(token)
         except Exception:
-            user = None
+            if self.raise_if_user_finding_error:
+                raise
+            else:
+                user = None
 
         if user:
             return user, token
