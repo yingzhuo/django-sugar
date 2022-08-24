@@ -25,7 +25,7 @@ class Authenticator(object, metaclass=abc.ABCMeta):
         """
         认证一个请求
         :param request: 请求实例
-        :return:
+        :return: 用户对象
         """
 
     def authenticate_header(self, request):
