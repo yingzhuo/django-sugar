@@ -12,12 +12,42 @@ import uuid as u
 
 
 def random_uuid36():
+    """
+    生成随机UUID
+
+    :return: uuid
+    """
     return str(u.uuid4())
 
 
 def random_uuid32():
+    """
+    生成随机UUID (移除了'-'符号)
+
+    :return: uuid
+    """
     return random_uuid36().replace('-', '')
 
 
 def random_uuid(*, remove_hyphen=False):
+    """
+    生成随机UUID
+
+    :param remove_hyphen: 是否要移除结果中的'-'符号
+    :return: uuid
+    """
     return random_uuid32() if remove_hyphen else random_uuid36()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+def _uuid_generator_factory(*, remove_hyphen=False):
+    while True:
+        yield random_uuid(remove_hyphen=remove_hyphen)
+
+
+"""36位UUID生成器实例"""
+UUID36_GENERATOR = _uuid_generator_factory(remove_hyphen=False)
+
+"""32位UUID生成器实例"""
+UUID32_GENERATOR = _uuid_generator_factory(remove_hyphen=True)

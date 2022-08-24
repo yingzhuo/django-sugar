@@ -56,4 +56,11 @@ def sha256(string, *, charset='utf-8'):
 
 
 def sha512(string, *, charset='utf-8'):
+    """
+    sha512哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
     return hashlib.sha512(string.encode(encoding=charset)).hexdigest()

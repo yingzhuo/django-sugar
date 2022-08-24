@@ -71,10 +71,6 @@ class HttpRequestDescriptor(object):
     def get_detail(self):
         d = list()
 
-        # 请求具体类型
-        d.append("Request Type:")
-        d.append("\t%s" % type(self.__class__.__qualname__))
-
         # 基本信息
         d.append("Base Information:")
         for name, content in self.get_base_info().items():
