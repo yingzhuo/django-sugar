@@ -4,10 +4,11 @@
 
 ```sh
 # install
-pip3 install git+https://github.com/yingzhuo/django-sugar.git
+pip3 install git+https://github.com/yingzhuo/django-sugar.git@main
 
 # install (upgrade)
-pip3 install -U git+https://github.com/yingzhuo/django-sugar.git
+pip3 uninstall -y django-sugar
+pip3 install git+https://github.com/yingzhuo/django-sugar.git@main
 ```
 
 ### 许可证

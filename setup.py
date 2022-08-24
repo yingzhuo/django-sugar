@@ -12,6 +12,9 @@ from setuptools import setup, find_packages
 
 import django_sugar
 
+with open(r'./requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name='django_sugar',
     version=django_sugar.VERSION,
@@ -19,6 +22,5 @@ setup(
     author_email='yingzhor@gmail.com',
     url=r'https://github.com/yingzhuo/django-sugar',
     packages=find_packages(),
-    requires=[
-    ],
+    requires=required,
 )

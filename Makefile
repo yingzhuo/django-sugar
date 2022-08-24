@@ -5,6 +5,7 @@ usage:
 	@echo "======================================================================"
 
 github:
+	@pip3 freeze > $(CURDIR)/requirements.txt
 	@git status
 	@git add .
 	@git commit -m 'update'
