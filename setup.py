@@ -12,8 +12,8 @@ from setuptools import setup, find_packages
 
 import django_sugar
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
+# with open('requirements.txt') as f:
+#     required = f.read().splitlines()
 
 setup(
     name='django_sugar',
@@ -22,5 +22,9 @@ setup(
     author_email='yingzhor@gmail.com',
     url=r'https://github.com/yingzhuo/django-sugar',
     packages=find_packages(),
-    install_requires=required,
+    install_requires=[
+        'django>=4.1',
+        'djangorestframework>3.13.1',
+        'pyjwt>=2.4.0',
+    ],
 )

@@ -152,10 +152,14 @@ _DEFAULT_HS256_SECRET = 'django-sugar:HS256@@secret-1234567890'
 
 class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
     """
-    HS256算法JWT相关的 用户信息查找器
+    HS256算法JWT相关的用户信息查找器
     """
 
+    # 加密key
     hs256_secret = _DEFAULT_HS256_SECRET
+
+    # 是否要验证JWT的签名
+    verify_signature = True
 
     def get_user_by_token(self, jwt_token, **kwargs):
         user_info = self._parse_token(jwt_token)
@@ -172,7 +176,11 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
 
     def _parse_token(self, jwt_token) -> Optional[dict]:
         try:
-            return jwt.decode(jwt_token, key=self.hs256_secret, algorithms=['HS256'])
+            options = {
+                'verify_signature': self.verify_signature,
+            }
+
+            return jwt.decode(jwt_token, key=self.hs256_secret, algorithms=['HS256'], options=options)
         except exceptions.PyJWTError as exc:
             exc = self.map_exception(exc)
             if exc is None:
@@ -188,6 +196,7 @@ class HS256JWTTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
     此类为抽象类。
     """
 
+    # 加密key
     hs256_secret = _DEFAULT_HS256_SECRET
 
     def generate_token(self, user, **kwargs):
