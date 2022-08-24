@@ -24,7 +24,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'django>=4.1',
-        'djangorestframework>3.13.1',
+        'djangorestframework>=3.13.1',
         'pyjwt>=2.4.0',
     ],
 )
