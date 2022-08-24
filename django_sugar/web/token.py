@@ -217,6 +217,8 @@ class SimpleRandomStringTokenGenerator(TokenGenerator):
 class TokenBasedUserFinder(object, metaclass=abc.ABCMeta):
     """
     通过token获取用户实例的组件
+
+    此类为抽象类。
     """
 
     @abc.abstractmethod

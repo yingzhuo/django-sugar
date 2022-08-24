@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import abc
 
-from django_sugar.lang import codec, strtool
+from django_sugar.lang import codec, strtool, base64
 
 # 支持的加密算法
 # 其中reverse算法和noop算法只建议用在开发环境
@@ -21,15 +21,11 @@ _SUPPORTED_ALGORITHMS = [
     'sha1',
     'sha256',
     'sha512',
+    'base64',
 ]
 
 
 class PasswordEncoder(object, metaclass=abc.ABCMeta):
-
-    def __new__(cls, *args, **kwargs):
-        e = object.__new__(CompositePasswordEncoder)
-        e.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
-        return e
 
     @abc.abstractmethod
     def encode_password(self, raw_password):
@@ -52,13 +48,7 @@ class PasswordEncoder(object, metaclass=abc.ABCMeta):
 
 
 class CompositePasswordEncoder(PasswordEncoder):
-    encoding_algorithm = None
-
-    def __init__(self, **kwargs):
-        if self.encoding_algorithm is None:
-            self.encoding_algorithm = kwargs.get('encoding_algorithm', 'md5')
-
-        self._check_algorithm()
+    encoding_algorithm = 'md5'
 
     def encode_password(self, raw_password):
         self._check_algorithm()
@@ -68,18 +58,26 @@ class CompositePasswordEncoder(PasswordEncoder):
 
         if self.encoding_algorithm == 'noop':
             return '{noop}%s' % raw_password
-        elif self.encoding_algorithm == 'md5':
+
+        if self.encoding_algorithm == 'md5':
             return '{md5}%s' % codec.md5(raw_password)
-        elif self.encoding_algorithm == 'sha1':
+
+        if self.encoding_algorithm == 'sha1':
             return '{sha1}%s' % codec.sha1(raw_password)
-        elif self.encoding_algorithm == 'sha256':
+
+        if self.encoding_algorithm == 'sha256':
             return '{sha256}%s' % codec.sha256(raw_password)
-        elif self.encoding_algorithm == 'sha512':
+
+        if self.encoding_algorithm == 'sha512':
             return '{sha512}%s' % codec.sha512(raw_password)
-        elif self.encoding_algorithm == 'reverse':
+
+        if self.encoding_algorithm == 'reverse':
             return '{reverse}%s' % strtool.reverse(raw_password)
-        else:
-            pass
+
+        if self.encoding_algorithm == 'base64':
+            return '{base64}%s' % base64.base64_urlsafe_encode(raw_password)
+
+        return None
 
     def password_matches(self, raw_password, encoded_password):
         self._check_algorithm()
@@ -89,18 +87,26 @@ class CompositePasswordEncoder(PasswordEncoder):
 
         if encoded_password.startswith('{noop}'):
             return encoded_password[len('{noop}'):] == raw_password
-        elif encoded_password.startswith('{md5}'):
+
+        if encoded_password.startswith('{md5}'):
             return encoded_password[len('{md5}'):] == codec.md5(raw_password)
-        elif encoded_password.startswith('{sha1}'):
+
+        if encoded_password.startswith('{sha1}'):
             return encoded_password[len('{sha1}'):] == codec.sha1(raw_password)
-        elif encoded_password.startswith('{sha256}'):
+        if encoded_password.startswith('{sha256}'):
             return encoded_password[len('{sha256}'):] == codec.sha256(raw_password)
-        elif encoded_password.startswith('{sha512}'):
+
+        if encoded_password.startswith('{sha512}'):
             return encoded_password[len('{sha512}'):] == codec.sha512(raw_password)
-        elif encoded_password.startswith('{reverse}'):
-            return strtool.reverse(encoded_password[len('{reverse}')]) == raw_password
-        else:
-            return raw_password == encoded_password
+
+        if encoded_password.startswith('{reverse}'):
+            return strtool.reverse(encoded_password[len('{reverse}'):]) == raw_password
+
+        if encoded_password.startswith('{base64}'):
+            return base64.base64_urlsafe_decode(encoded_password[len('{base64}'):]) == raw_password
+
+        # 默认按明文处理
+        return raw_password == encoded_password
 
     def _check_algorithm(self):
         if self.encoding_algorithm not in _SUPPORTED_ALGORITHMS:

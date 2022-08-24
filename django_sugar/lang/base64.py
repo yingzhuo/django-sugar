@@ -11,7 +11,7 @@
 import base64 as b
 
 
-def base64_standard_encode(string, charset='utf-8'):
+def base64_standard_encode(string, *, charset='utf-8'):
     """
     base64编码 (标准)
 
@@ -24,7 +24,7 @@ def base64_standard_encode(string, charset='utf-8'):
     return base64_bytes.decode(charset)
 
 
-def base64_standard_decode(base64_string, charset='utf-8'):
+def base64_standard_decode(base64_string, *, charset='utf-8'):
     """
     base64解码 (标准)
 
@@ -37,7 +37,7 @@ def base64_standard_decode(base64_string, charset='utf-8'):
     return string_bytes.decode(charset)
 
 
-def base64_urlsafe_encode(string, charset='utf-8'):
+def base64_urlsafe_encode(string, *, charset='utf-8'):
     """
     base64编码 (URL safe)
 
@@ -50,7 +50,7 @@ def base64_urlsafe_encode(string, charset='utf-8'):
     return base64_bytes.decode(charset)
 
 
-def base64_urlsafe_decode(base64_string, charset='utf-8'):
+def base64_urlsafe_decode(base64_string, *, charset='utf-8'):
     """
     base64解码 (URL safe)
 
