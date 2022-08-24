@@ -91,7 +91,7 @@ class HeaderTokenResolver(TokenResolver):
         token_value = request.headers.get(self.header_name, None)
         token_value = strtool.blank_to_none(token_value)
 
-        if token_value is None or not token_value.startswith(self.token_value_prefix):
+        if token_value is None or not strtool.startswith(token_value, self.token_value_prefix, ignore_cases=True):
             # 找不到此请求头或者值不以指定的前缀开始
             return None
         else:

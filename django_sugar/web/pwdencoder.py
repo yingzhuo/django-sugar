@@ -10,11 +10,13 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import abc
 
-from django_sugar.lang import codec
+from django_sugar.lang import codec, strtool
 
 # 支持的加密算法
+# 其中reverse算法和noop算法只建议用在开发环境
 _SUPPORTED_ALGORITHMS = [
     'noop',
+    'reverse',
     'md5',
     'sha1',
     'sha256',
@@ -74,6 +76,8 @@ class CompositePasswordEncoder(PasswordEncoder):
             return '{sha256}%s' % codec.sha256(raw_password)
         elif self.encoding_algorithm == 'sha512':
             return '{sha512}%s' % codec.sha512(raw_password)
+        elif self.encoding_algorithm == 'reverse':
+            return '{reverse}%s' % strtool.reverse(raw_password)
         else:
             pass
 
@@ -93,6 +97,8 @@ class CompositePasswordEncoder(PasswordEncoder):
             return encoded_password[len('{sha256}'):] == codec.sha256(raw_password)
         elif encoded_password.startswith('{sha512}'):
             return encoded_password[len('{sha512}'):] == codec.sha512(raw_password)
+        elif encoded_password.startswith('{reverse}'):
+            return strtool.reverse(encoded_password[len('{reverse}')]) == raw_password
         else:
             return raw_password == encoded_password
 

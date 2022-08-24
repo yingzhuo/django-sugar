@@ -10,17 +10,45 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+def reverse(string):
+    """
+    字符串反向
+
+    :param string: 字符串
+    :return: 结果
+    """
+    return string[::-1]
+
+
 def is_empty_or_none(string):
+    """
+    判断字符串是否为空串或None
+
+    :param string:
+    :return: 结果
+    """
     return not string
 
 
 def is_blank_or_none(string):
+    """
+    判断字符串是否为空白串或None
+
+    :param string:
+    :return: 结果
+    """
     if string is None:
         return True
     return string.strip() == ''
 
 
 def empty_to_none(string):
+    """
+    空字符串替换为None
+
+    :param string:
+    :return: 结果
+    """
     if is_empty_or_none(string):
         return None
     else:
@@ -28,6 +56,12 @@ def empty_to_none(string):
 
 
 def blank_to_none(string):
+    """
+    空白字符串替换为None
+
+    :param string:
+    :return: 结果
+    """
     if is_blank_or_none(string):
         return None
     else:
@@ -35,6 +69,12 @@ def blank_to_none(string):
 
 
 def none_to_empty(string):
+    """
+    None替换成空字符串
+
+    :param string:
+    :return: 结果
+    """
     if string is None:
         return ''
     else:
@@ -42,7 +82,45 @@ def none_to_empty(string):
 
 
 def equals(string1, string2, *, ignore_cases=False):
+    """
+    比较两个字符串是否相等
+
+    :param string1: 字符串1
+    :param string2: 字符串2
+    :param ignore_cases: 是否忽略大小写
+    :return: 结果
+    """
     if ignore_cases:
         return string1.lower() == string2.lower()
     else:
         return string1 == string2
+
+
+def startswith(string, prefix, *, ignore_cases=False):
+    """
+    判断字符串是否以指定的前缀开始
+
+    :param string: 字符串
+    :param prefix: 前缀
+    :param ignore_cases: 是否忽略大小写
+    :return: 结果
+    """
+    if ignore_cases:
+        return string.lower().startswith(prefix.lower())
+    else:
+        return string.startswith(prefix)
+
+
+def endswith(string, suffix, *, ignore_cases=False):
+    """
+    判断字符串是否以指定的后缀结束
+
+    :param string: 字符串
+    :param suffix: 后缀
+    :param ignore_cases: 是否忽略大小写
+    :return: 结果
+    """
+    if ignore_cases:
+        return string.lower().endswith(suffix.lower())
+    else:
+        return string.endswith(suffix)
