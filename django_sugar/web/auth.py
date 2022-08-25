@@ -10,10 +10,12 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import abc
 
+from rest_framework import authentication
+
 from django_sugar.lang import reflection
 
 
-class Authenticator(object, metaclass=abc.ABCMeta):
+class Authenticator(authentication.BaseAuthentication, metaclass=abc.ABCMeta):
     """
     认证器
 
