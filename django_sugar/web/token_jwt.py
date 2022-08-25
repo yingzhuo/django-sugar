@@ -159,7 +159,25 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
     hs256_secret = _DEFAULT_HS256_SECRET
 
     # 是否要验证JWT的签名
-    verify_signature = True
+    jwt_verify_signature = True
+
+    # 是否要验证exp
+    jwt_verify_exp = True
+
+    # 是否要验证nbf
+    jwt_verify_nbf = True
+
+    # 是否要验证iat
+    jwt_verify_iat = False
+
+    # 是否要验证iss
+    jwt_verify_iss = False
+
+    # 是否要验证aud
+    jwt_verify_aud = False
+
+    # 比需要有的 claims_name 默认无要求
+    jwt_required_claims_names = []
 
     def get_user_by_token(self, jwt_token, **kwargs):
         user_info = self._parse_token(jwt_token)
@@ -177,8 +195,16 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
     def _parse_token(self, jwt_token) -> Optional[dict]:
         try:
             options = {
-                'verify_signature': self.verify_signature,
+                'verify_signature': self.jwt_verify_signature,
+                'verify_exp': self.jwt_verify_exp,
+                'verify_nbf': self.jwt_verify_nbf,
+                'verify_iss': self.jwt_verify_iss,
+                'verify_iat': self.jwt_verify_iat,
+                'verify_aud': self.jwt_verify_aud,
             }
+
+            if self.jwt_required_claims_names:
+                options['require'] = self.jwt_required_claims_names
 
             return jwt.decode(jwt_token, key=self.hs256_secret, algorithms=['HS256'], options=options)
         except exceptions.PyJWTError as exc:
@@ -187,6 +213,9 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
                 return None
             else:
                 raise exc
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 class HS256JWTTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
@@ -207,6 +236,13 @@ class HS256JWTTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
     def user_to_jwt_payload(self, user) -> Optional[Dict[str, Any]]:
         """
         用户对象转换成字典类型，以便生成JWT令牌
+
+        特殊claim键共有五个:
+        “exp” (Expiration Time) Claim (UTC)
+        “nbf” (Not Before Time) Claim (UTC)
+        “iss” (Issuer) Claim
+        “aud” (Audience) Claim
+        “iat” (Issued At) Claim
 
         :param user: 用户对象
         :return: 字典
