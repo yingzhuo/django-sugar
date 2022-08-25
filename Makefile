@@ -1,7 +1,8 @@
 usage:
 	@echo "======================================================================"
-	@echo "usage (default) : display this menu"
-	@echo "github          : push source code to github.com"
+	@echo "usage (default)  : display this menu"
+	@echo "github           : push source code to github.com"
+	@echo "install-requires : install requirements"
 	@echo "======================================================================"
 
 github:
@@ -10,3 +11,6 @@ github:
 	@git add .
 	@git commit -m 'update'
 	@git push
+
+install-requires:
+	@pip3 install -r $(CURDIR)/requirements.txt
