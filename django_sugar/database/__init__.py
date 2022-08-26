@@ -50,4 +50,7 @@ def _raw_query_single(sql: str, *, params=None):
             cursor.execute(sql)
         col_names = [desc[0] for desc in cursor.description]
         row = cursor.fetchone()
-        return dict(zip(col_names, row))
+        if row and col_names:
+            return dict(zip(col_names, row))
+        else:
+            return None
