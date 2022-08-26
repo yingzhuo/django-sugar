@@ -8,30 +8,33 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
+from django_sugar.lang import typetest
 
-def get_client_sent_data(request, *, data_over_get=True, default_values=None):
+
+def get_client_sent_data(request, /, *, default_values=None, **kwargs):
     """
     合并请求提交的数据
 
     :param request: 请求对象
-    :param data_over_get: 为True时请求体中的数据覆盖query-params
     :param default_values: 可以设置一些缺省值
+    :param kwargs: 其他参数
     :return: 合并后的数据(字典)
     """
     default_values = default_values or dict()
 
-    if data_over_get:
-        return {
-            **default_values,
-            **request.GET,
-            **request.data,
-        }
-    else:
-        return {
-            **default_values,
-            **request.data,
-            **request.GET,
-        }
+    data = {
+        **default_values,
+        **kwargs,
+        **request.GET,
+        **request.data,
+    }
+
+    for k in data:
+        v = data[k]
+        if typetest.is_list(v):
+            data[k] = v[-1]
+
+    return data
 
 
 # ----------------------------------------------------------------------------------------------------------------------
