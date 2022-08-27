@@ -22,6 +22,6 @@ setup(
     install_requires=[
         'django>=4.1',
         'djangorestframework>=3.13.1',
-        'PyJWT==2.4.0',
+        'PyJWT>=2.4.0',
     ],
 )

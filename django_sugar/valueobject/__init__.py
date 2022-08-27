@@ -8,19 +8,5 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-import abc
-
-
-class PairLike(metaclass=abc.ABCMeta):
-
-    @abc.abstractmethod
-    def left(self):
-        """
-        获取左值
-        """
-
-    @abc.abstractmethod
-    def right(self):
-        """
-        获取右值
-        """
+from django_sugar.valueobject.daterange import DateRange
+from . import *

@@ -11,7 +11,7 @@
 from django.db import connection
 
 
-def raw_query(sql: str, /, *, params=None, many=True):
+def raw_query(sql: str, *, params=None, many=True):
     """
     原生SQL查询数据
 
