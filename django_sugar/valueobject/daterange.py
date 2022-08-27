@@ -33,11 +33,8 @@ class DateRange(lang.PairLike):
     def __init__(self, left: datetime.datetime, right: datetime.datetime, **kwargs):
         self._date_format = kwargs.get('date_format', '%Y-%m-%d')
         self._delimiter = kwargs.get('delimiter', '@@')
-
-        if left <= right:
-            self._date_1, self._date_2 = left, right
-        else:
-            self._date_1, self._date_2 = right, left
+        self._date_1 = min(left, right)
+        self._date_2 = max(left, right)
 
         self._dates_list = []
         it = self._date_1
@@ -64,9 +61,16 @@ class DateRange(lang.PairLike):
         return self._dates_list[item]
 
     def __add__(self, other):
-        new_left = self._date_1 + other
-        new_right = self._date_2 + other
-        return DateRange(new_left, new_right, date_format=self._date_format, delimiter=self._delimiter)
+        if isinstance(other, datetime.timedelta):
+            new_left = self._date_1 + other
+            new_right = self._date_2 + other
+            return DateRange(new_left, new_right, date_format=self._date_format, delimiter=self._delimiter)
+        elif isinstance(other, DateRange):
+            new_left = min(self._date_1, self._date_2, other._date_1, other._date_2)
+            new_right = max(self._date_1, self._date_2, other._date_1, other._date_2)
+            return DateRange(new_left, new_right, date_format=self._date_format, delimiter=self._delimiter)
+        else:
+            raise TypeError('other type not supported')
 
     def __iadd__(self, other):
         return self.__add__(other)
