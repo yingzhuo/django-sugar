@@ -70,7 +70,7 @@ def random_integer(left, right):
     生成随机数字
 
     :param left: 区间左值 (包含)
-    :param right: 区间左值 (右值)
+    :param right: 区间右值 (包含)
     :return: 随机整数
     """
     return r.randint(left, right)

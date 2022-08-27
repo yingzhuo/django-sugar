@@ -61,8 +61,6 @@ class DateRange(lang.PairLike):
         return self.__str__()
 
     def __getitem__(self, item):
-        if isinstance(item, slice):
-            raise TypeError('slice is not supported')
         return self._dates_list[item]
 
     def __add__(self, other):
