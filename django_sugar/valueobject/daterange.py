@@ -12,6 +12,9 @@ import datetime
 
 from django_sugar import lang
 
+_DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
+_DEFAULT_DELIMITER = '@@'
+
 
 class DateRange(lang.PairLike):
     """
@@ -24,41 +27,24 @@ class DateRange(lang.PairLike):
     _date_2 = None
     _date_format = None
     _delimiter = None
-    _dates_list = None
-
-    @classmethod
-    def __new__(cls, *args, **kwargs):
-        return object.__new__(DateRange)
 
     def __init__(self, left: datetime.datetime, right: datetime.datetime, **kwargs):
-        self._date_format = kwargs.get('date_format', '%Y-%m-%d')
-        self._delimiter = kwargs.get('delimiter', '@@')
+        self._date_format = kwargs.get('date_format', _DEFAULT_DATETIME_FORMAT)
+        self._delimiter = kwargs.get('delimiter', _DEFAULT_DELIMITER)
         self._date_1 = min(left, right)
         self._date_2 = max(left, right)
 
-        self._dates_list = []
-        it = self._date_1
-        while it <= self._date_2:
-            self._dates_list.append(it)
-            it = it + datetime.timedelta(days=1)
-
-    def as_list(self):
-        return self._dates_list
-
-    def __len__(self):
-        return len(self._dates_list)
-
     def __iter__(self):
-        return iter(self.as_list())
+        x = self._date_1
+        while x <= self._date_2:
+            yield x
+            x += datetime.timedelta(days=1)
 
     def __str__(self):
         return rf"{self._date_1.strftime(self._date_format)}{self._delimiter}{self._date_2.strftime(self._date_format)}"
 
     def __repr__(self):
         return self.__str__()
-
-    def __getitem__(self, item):
-        return self._dates_list[item]
 
     def __add__(self, other):
         if isinstance(other, datetime.timedelta):
@@ -70,7 +56,7 @@ class DateRange(lang.PairLike):
             new_right = max(self._date_1, self._date_2, other._date_1, other._date_2)
             return DateRange(new_left, new_right, date_format=self._date_format, delimiter=self._delimiter)
         else:
-            raise TypeError('other type not supported')
+            raise TypeError('type not supported')
 
     def __iadd__(self, other):
         return self.__add__(other)
@@ -93,8 +79,8 @@ class DateRange(lang.PairLike):
 
     @staticmethod
     def from_string(string: str, *, date_format=None, delimiter=None):
-        date_format = date_format or '%Y-%m-%d'
-        delimiter = delimiter or '@@'
+        date_format = date_format or _DEFAULT_DATETIME_FORMAT
+        delimiter = delimiter or _DEFAULT_DELIMITER
         parts = string.split(delimiter, 2)
         left = datetime.datetime.strptime(parts[0], date_format)
         right = datetime.datetime.strptime(parts[-1], date_format)
