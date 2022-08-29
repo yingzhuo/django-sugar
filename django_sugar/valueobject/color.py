@@ -8,11 +8,10 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-import re
 
 from rest_framework import serializers, exceptions
 
-from django_sugar import assert_type
+from django_sugar import assert_type, assert_regex_matches
 
 
 class Color(object):
@@ -49,10 +48,7 @@ class Color(object):
     @staticmethod
     def from_string(string):
         assert_type(string, str)
-
-        if not re.match(r'^rgb\([0-9]+,[0-9]+,[0-9]+\)$', string):
-            raise ValueError('Incorrect format. Expected `rgb(#,#,#)`.')
-
+        assert_regex_matches(string, r'^rgb\([0-9]+,[ ]*[0-9]+,[ ]*[0-9]+\)$')
         parts = string.lstrip('rgb(').rstrip(')').split(',', maxsplit=3)
         return Color(int(parts[0]), int(parts[1]), int(parts[2]))
 
