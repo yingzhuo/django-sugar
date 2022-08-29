@@ -119,14 +119,25 @@ class DateRangeField(serializers.Field):
 
     用于序列化器
     """
-    date_format = _DEFAULT_DATETIME_FORMAT
-    delimiter = _DEFAULT_DELIMITER
+    date_format = None
+    delimiter = None
+    default_error_messages = {
+        'invalid': "Invalid string format for 'DateRange'.",
+    }
+
+    def __init__(self, *, date_format=None, delimiter=None, **kwargs):
+        self.date_format = date_format or _DEFAULT_DATETIME_FORMAT
+        self.delimiter = delimiter or _DEFAULT_DELIMITER
+        super().__init__(**kwargs)
 
     def to_representation(self, value):
         return str(value)
 
     def to_internal_value(self, data):
         try:
+            if DateRange.is_valid_string(data, date_format=self.date_format, delimiter=self.delimiter):
+                self.fail('invalid')
+
             return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
         except ValueError as ex:
             raise exceptions.ValidationError(str(ex))
