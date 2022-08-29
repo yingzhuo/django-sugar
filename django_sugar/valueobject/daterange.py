@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import datetime
 
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 
 from django_sugar import lang, assert_type
 
@@ -134,10 +134,6 @@ class DateRangeField(serializers.Field):
         return str(value)
 
     def to_internal_value(self, data):
-        try:
-            if not DateRange.is_valid_string(data, date_format=self.date_format, delimiter=self.delimiter):
-                self.fail('invalid')
-
-            return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
-        except ValueError as ex:
-            raise exceptions.ValidationError(str(ex))
+        if not DateRange.is_valid_string(data, date_format=self.date_format, delimiter=self.delimiter):
+            self.fail('invalid')
+        return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)

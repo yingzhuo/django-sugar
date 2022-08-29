@@ -8,8 +8,7 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 
 from django_sugar import assert_type, assert_regex_matches
 
@@ -52,6 +51,14 @@ class Color(object):
         parts = string.lstrip('rgb(').rstrip(')').split(',', maxsplit=3)
         return Color(int(parts[0]), int(parts[1]), int(parts[2]))
 
+    @staticmethod
+    def is_valid_string(string):
+        try:
+            Color.from_string(string)
+            return True
+        except ValueError:
+            return False
+
     def __str__(self):
         return "rgb(%d,%d,%d)" % (self._red, self._green, self._blue)
 
@@ -68,11 +75,17 @@ class ColorField(serializers.Field):
     用于序列化器
     """
 
+    default_error_messages = {
+        'invalid': "Invalid string format for 'Color'.",
+    }
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def to_representation(self, value):
         return str(value)
 
     def to_internal_value(self, data):
-        try:
-            return Color.from_string(data)
-        except ValueError as ex:
-            raise exceptions.ValidationError(str(ex))
+        if not Color.is_valid_string(data):
+            self.fail('invalid')
+        return Color.from_string(data)
