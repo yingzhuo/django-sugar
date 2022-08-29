@@ -9,5 +9,5 @@
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
 from django_sugar.valueobject.color import Color, ColorField
-from django_sugar.valueobject.daterange import DateRange
+from django_sugar.valueobject.daterange import DateRange, DateRangeField
 from . import *

@@ -10,9 +10,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import datetime
 
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 
-from django_sugar import lang
+from django_sugar import lang, assert_type
 
 _DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
 _DEFAULT_DELIMITER = '@@'
@@ -80,16 +80,25 @@ class DateRange(lang.PairLike):
         return self._date_2
 
     @staticmethod
-    def from_string(string: str, *, date_format=None, delimiter=None):
-        date_format = date_format or _DEFAULT_DATETIME_FORMAT
-        delimiter = delimiter or _DEFAULT_DELIMITER
-        parts = string.split(delimiter, 2)
-        left = datetime.datetime.strptime(parts[0], date_format)
-        right = datetime.datetime.strptime(parts[-1], date_format)
-        return DateRange(left, right, date_format=date_format, delimiter=delimiter)
+    def from_string(string, *, date_format=None, delimiter=None):
+        assert_type(string, str)
+
+        try:
+            date_format = date_format or _DEFAULT_DATETIME_FORMAT
+            delimiter = delimiter or _DEFAULT_DELIMITER
+            parts = string.split(delimiter, 2)
+            left = datetime.datetime.strptime(parts[0], date_format)
+            right = datetime.datetime.strptime(parts[-1], date_format)
+            return DateRange(left, right, date_format=date_format, delimiter=delimiter)
+        except ValueError:
+            msg = "Invalid format for '%s'." % DateRange.__name__
+            raise ValueError(msg)
 
     @staticmethod
-    def is_valid_string(string: str, *, date_format=None, delimiter=None):
+    def is_valid_string(string, *, date_format=None, delimiter=None):
+        if not isinstance(string, str):
+            return False
+
         try:
             date_format = date_format or _DEFAULT_DATETIME_FORMAT
             delimiter = delimiter or _DEFAULT_DELIMITER
@@ -117,4 +126,7 @@ class DateRangeField(serializers.Field):
         return str(value)
 
     def to_internal_value(self, data):
-        return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
+        try:
+            return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
+        except ValueError as ex:
+            raise exceptions.ValidationError(str(ex))

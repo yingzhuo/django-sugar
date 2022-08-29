@@ -12,6 +12,8 @@ import re
 
 from rest_framework import serializers, exceptions
 
+from django_sugar import assert_type
+
 
 class Color(object):
     """
@@ -46,9 +48,7 @@ class Color(object):
 
     @staticmethod
     def from_string(string):
-        if not isinstance(string, str):
-            msg = 'Incorrect type! Expected a string, but got %s.'
-            raise ValueError(msg % type(string).__name__)
+        assert_type(string, str)
 
         if not re.match(r'^rgb\([0-9]+,[0-9]+,[0-9]+\)$', string):
             raise ValueError('Incorrect format. Expected `rgb(#,#,#)`.')
