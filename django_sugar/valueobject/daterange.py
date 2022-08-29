@@ -10,6 +10,8 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import datetime
 
+from rest_framework import serializers
+
 from django_sugar import lang
 
 _DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
@@ -89,11 +91,30 @@ class DateRange(lang.PairLike):
     @staticmethod
     def is_valid_string(string: str, *, date_format=None, delimiter=None):
         try:
-            date_format = date_format or '%Y-%m-%d'
-            delimiter = delimiter or '@@'
+            date_format = date_format or _DEFAULT_DATETIME_FORMAT
+            delimiter = delimiter or _DEFAULT_DELIMITER
             parts = string.split(delimiter, 2)
             datetime.datetime.strptime(parts[0], date_format)
             datetime.datetime.strptime(parts[-1], date_format)
             return True
         except ValueError:
             return False
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class DateRangeField(serializers.Field):
+    """
+    DateRange相关Field
+
+    用于序列化器
+    """
+    date_format = _DEFAULT_DATETIME_FORMAT
+    delimiter = _DEFAULT_DELIMITER
+
+    def to_representation(self, value):
+        return str(value)
+
+    def to_internal_value(self, data):
+        return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
