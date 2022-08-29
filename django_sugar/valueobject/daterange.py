@@ -135,7 +135,7 @@ class DateRangeField(serializers.Field):
 
     def to_internal_value(self, data):
         try:
-            if DateRange.is_valid_string(data, date_format=self.date_format, delimiter=self.delimiter):
+            if not DateRange.is_valid_string(data, date_format=self.date_format, delimiter=self.delimiter):
                 self.fail('invalid')
 
             return DateRange.from_string(data, date_format=self.date_format, delimiter=self.delimiter)
