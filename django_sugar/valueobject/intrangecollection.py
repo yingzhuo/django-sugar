@@ -8,9 +8,8 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-from rest_framework import serializers
 
-from django_sugar import assert_type
+from django_sugar import assert_type, valueobject
 from django_sugar.valueobject import IntRange
 
 _DEFAULT_DELIMITER = ';'
@@ -63,7 +62,7 @@ class IntRangeCollection(object):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class IntRangeCollectionField(serializers.Field):
+class IntRangeCollectionField(valueobject.AbstractField):
     """
     整数范围的集合相关Field
 
@@ -100,6 +99,3 @@ class IntRangeCollectionField(serializers.Field):
                     self.fail('max_interval')
             last = current
         return d
-
-    def to_representation(self, value):
-        return str(self)

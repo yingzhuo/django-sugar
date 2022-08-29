@@ -8,9 +8,8 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-from rest_framework import serializers
 
-from django_sugar import lang, assert_type
+from django_sugar import lang, assert_type, valueobject
 
 _DEFAULT_DELIMITER = '@@'
 
@@ -68,7 +67,7 @@ class IntRange(lang.PairLike):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class IntRangeField(serializers.Field):
+class IntRangeField(valueobject.AbstractField):
     """
     整数范围相关Field
 
@@ -88,6 +87,3 @@ class IntRangeField(serializers.Field):
             self.fail('invalid')
         else:
             return IntRange.from_string(data)
-
-    def to_representation(self, value):
-        return str(value)

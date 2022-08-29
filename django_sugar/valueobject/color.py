@@ -8,9 +8,7 @@
 #
 # https://github.com/yingzhuo/django-sugar
 # ----------------------------------------------------------------------------------------------------------------------
-from rest_framework import serializers
-
-from django_sugar import assert_type, assert_regex_matches
+from django_sugar import assert_type, assert_regex_matches, valueobject
 
 
 class Color(object):
@@ -68,7 +66,7 @@ class Color(object):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class ColorField(serializers.Field):
+class ColorField(valueobject.AbstractField):
     """
     颜色Field
 
@@ -82,10 +80,8 @@ class ColorField(serializers.Field):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def to_representation(self, value):
-        return str(value)
-
     def to_internal_value(self, data):
         if not Color.is_valid_string(data):
             self.fail('invalid')
-        return Color.from_string(data)
+        else:
+            return Color.from_string(data)
