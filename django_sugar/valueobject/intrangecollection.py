@@ -29,7 +29,7 @@ class IntRangeCollection(object):
         self._int_range_list = int_range_list
 
     def __str__(self):
-        return self._delimiter.join(self._int_range_list)
+        return self._delimiter.join(map(str, self._int_range_list))
 
     def __repr__(self):
         return self.__str__()
@@ -85,18 +85,21 @@ class IntRangeCollectionField(serializers.Field):
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
+        # 检查字符串是否合法
         if not IntRangeCollection.is_valid_string(data,
                                                   delimiter_of_int_range=self.delimiter_of_int_range,
                                                   delimiter_of_collection=self.delimiter_of_collection):
             self.fail('invalid')
         d = IntRangeCollection.from_string(data)
 
+        # 检查间隙问题
         last = None
         for current in d:
             if last is not None:
                 if current.left - last.right > self.max_interval:
                     self.fail('max_interval')
             last = current
+        return d
 
     def to_representation(self, value):
         return str(self)
