@@ -13,3 +13,4 @@ from django_sugar.valueobject.color import Color, ColorField
 from django_sugar.valueobject.daterange import DateRange, DateRangeField
 from django_sugar.valueobject.intrange import IntRange, IntRangeField
 from django_sugar.valueobject.intrangecollection import IntRangeCollection, IntRangeCollectionField
+from django_sugar.valueobject.password import PasswordField

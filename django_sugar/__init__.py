@@ -11,9 +11,10 @@ r"""
 """
 import re
 
+__title__ = 'Django Sugar'
 __version__ = '0.1.0'
 __author__ = '应卓'
-__author_email__ = 'yingzhor@gmail.com'
+__license__ = 'Apache 2'
 
 # Version synonym
 VERSION = __version__

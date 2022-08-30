@@ -66,6 +66,16 @@ def random_digits_letters(length):
     return random_string(length, chars=s.digits)
 
 
+def random_printable_letters(length):
+    """
+    生成可打印字符字母随机字符串
+
+    :param length: 要生成的字符串长度
+    :return: 随机字符串
+    """
+    return random_string(length, chars=s.printable)
+
+
 def random_integer(left, right):
     """
     生成随机数字
