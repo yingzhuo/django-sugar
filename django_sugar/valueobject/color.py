@@ -9,7 +9,7 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar import assert_type, assert_regex_matches, valueobject
+from django_sugar import assert_type, assert_regex_matches
 from django_sugar.valueobject import abstractfield
 
 

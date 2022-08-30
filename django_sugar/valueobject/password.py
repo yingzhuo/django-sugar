@@ -15,6 +15,11 @@ from rest_framework import fields
 
 
 class PasswordField(fields.CharField):
+    """
+    密码(口令)相关Field
+
+    用于序列化器
+    """
     default_error_messages = {
         'invalid': "Invalid password.",
     }
@@ -35,6 +40,9 @@ class PasswordField(fields.CharField):
         self.must_contains_special_character_letter = must_contains_special_character_letter
         self.special_character_set = special_character_set or r'!@#$%^&*()_+-,./<>/?;:|'
         super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        return str(value)
 
     def to_internal_value(self, data):
         ret = super().to_internal_value(data)

@@ -11,7 +11,7 @@ r"""
 """
 import datetime
 
-from django_sugar import lang, assert_type, valueobject
+from django_sugar import lang, assert_type
 from django_sugar.valueobject import abstractfield
 
 _DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
@@ -70,6 +70,9 @@ class DateRange(lang.PairLike):
 
     def __isub__(self, other):
         return self.__sub__(other)
+
+    def __contains__(self, item):
+        return self._date_1 <= item <= self._date_2
 
     @property
     def left(self):

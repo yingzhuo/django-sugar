@@ -37,6 +37,9 @@ class IntRange(lang.PairLike):
     def __iter__(self):
         return iter(range(self._int_1, self._int_2 + 1))
 
+    def __contains__(self, item):
+        return self._int_1 <= item <= self._int_2
+
     @staticmethod
     def from_string(string, delimiter=None):
         assert_type(string, str)
