@@ -25,7 +25,7 @@ def get_client_sent_data(request, /, *, default_values=None, **kwargs):
     data = {
         **default_values,
         **kwargs,
-        **request.GET,
+        **request.query_params,
         **request.data,
     }
 
