@@ -9,8 +9,8 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar import assert_type, valueobject
-from django_sugar.valueobject import IntRange
+from django_sugar import assert_type
+from django_sugar.valueobject import IntRange, abstractfield
 
 _DEFAULT_DELIMITER = ';'
 _DELIMITER_OF_INT_RANGE = '@@'
@@ -62,7 +62,7 @@ class IntRangeCollection(object):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class IntRangeCollectionField(valueobject.AbstractField):
+class IntRangeCollectionField(abstractfield.AbstractField):
     """
     整数范围的集合相关Field
 

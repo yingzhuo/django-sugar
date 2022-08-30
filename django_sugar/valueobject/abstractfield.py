@@ -9,7 +9,12 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar.valueobject.color import Color, ColorField
-from django_sugar.valueobject.daterange import DateRange, DateRangeField
-from django_sugar.valueobject.intrange import IntRange, IntRangeField
-from django_sugar.valueobject.intrangecollection import IntRangeCollection, IntRangeCollectionField
+import abc
+
+from rest_framework import serializers
+
+
+class AbstractField(serializers.Field, metaclass=abc.ABCMeta):
+
+    def to_representation(self, value):
+        return str(value)

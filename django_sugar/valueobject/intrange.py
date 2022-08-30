@@ -9,7 +9,8 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar import lang, assert_type, valueobject
+from django_sugar import lang, assert_type
+from django_sugar.valueobject import abstractfield
 
 _DEFAULT_DELIMITER = '@@'
 
@@ -67,7 +68,7 @@ class IntRange(lang.PairLike):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class IntRangeField(valueobject.AbstractField):
+class IntRangeField(abstractfield.AbstractField):
     """
     整数范围相关Field
 

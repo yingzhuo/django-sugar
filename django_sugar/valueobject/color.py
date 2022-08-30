@@ -10,6 +10,7 @@ r"""
 
 """
 from django_sugar import assert_type, assert_regex_matches, valueobject
+from django_sugar.valueobject import abstractfield
 
 
 class Color(object):
@@ -67,7 +68,7 @@ class Color(object):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class ColorField(valueobject.AbstractField):
+class ColorField(abstractfield.AbstractField):
     """
     颜色Field
 

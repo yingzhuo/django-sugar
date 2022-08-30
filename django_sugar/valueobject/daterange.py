@@ -12,6 +12,7 @@ r"""
 import datetime
 
 from django_sugar import lang, assert_type, valueobject
+from django_sugar.valueobject import abstractfield
 
 _DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
 _DEFAULT_DELIMITER = '@@'
@@ -112,7 +113,7 @@ class DateRange(lang.PairLike):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class DateRangeField(valueobject.AbstractField):
+class DateRangeField(abstractfield.AbstractField):
     """
     DateRange相关Field
 
