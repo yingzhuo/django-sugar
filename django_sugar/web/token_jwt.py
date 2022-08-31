@@ -16,28 +16,14 @@ import jwt
 from jwt import exceptions
 
 from django_sugar.lang import reflection
-from django_sugar.web import token
+from django_sugar.web import token, jwtalg
 
 
-class JWTTokenParser(token.BearerTokenResolver):
+class JwtTokenParser(token.BearerTokenResolver):
     """
     JWT令牌解析器
     """
-
-    def resolve_token(self, request, **kwargs):
-        tk = super().resolve_token(request, **kwargs)
-
-        # 检查令牌中包含两个点号
-        # 否则不可能是JWT格式令牌
-        dot_count = 0
-        for ch in tk:
-            if ch == '.':
-                dot_count += 1
-
-        if dot_count != 2:
-            return None
-
-        return tk
+    pass
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -115,49 +101,9 @@ class MissingRequiredClaimException(JWTException):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class JWTTokenBasedUserFinder(token.TokenBasedUserFinder, metaclass=abc.ABCMeta):
-    def map_exception(self, ex):
-
-        if isinstance(ex, exceptions.ExpiredSignatureError):
-            return ExpiredSignatureException(str(ex))
-
-        if isinstance(ex, exceptions.InvalidSignatureError):
-            return InvalidSignatureException(str(ex))
-
-        if isinstance(ex, exceptions.InvalidAudienceError):
-            return InvalidAudienceException(str(ex))
-
-        if isinstance(ex, exceptions.InvalidIssuerError):
-            return InvalidIssuerException(str(ex))
-
-        if isinstance(ex, exceptions.InvalidIssuedAtError):
-            return InvalidIssuedAtException(str(ex))
-
-        if isinstance(ex, exceptions.ImmatureSignatureError):
-            return ImmatureSignatureException(str(ex))
-
-        if isinstance(ex, exceptions.InvalidAlgorithmError):
-            return InvalidAlgorithmException(str(ex))
-
-        if isinstance(ex, exceptions.MissingRequiredClaimError):
-            return MissingRequiredClaimException(str(ex))
-
-        if isinstance(ex, exceptions.PyJWTError):
-            return JWTException(str(ex))
-
-        return None
-
-
-_DEFAULT_HS256_SECRET = 'django-sugar:HS256@@secret-1234567890'
-
-
-class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
-    """
-    HS256算法JWT相关的用户信息查找器
-    """
-
-    # 加密key
-    hs256_secret = _DEFAULT_HS256_SECRET
+class JwtTokenBasedUserFinder(token.TokenBasedUserFinder):
+    # 签名算法与密钥
+    jwt_algorithm_and_key = jwtalg.HmacAlgorithm()
 
     # 是否要验证JWT的签名
     jwt_verify_signature = True
@@ -207,7 +153,10 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
             if self.jwt_required_claims_names:
                 options['require'] = self.jwt_required_claims_names
 
-            return jwt.decode(jwt_token, key=self.hs256_secret, algorithms=['HS256'], options=options)
+            return jwt.decode(jwt_token,
+                              key=self.jwt_algorithm_and_key.decoding_secret_key,
+                              algorithms=[self.jwt_algorithm_and_key.algorithm_name],
+                              options=options)
         except exceptions.PyJWTError as exc:
             exc = self.map_exception(exc)
             if exc is None:
@@ -215,11 +164,42 @@ class HS256JWTTokenBasedUserFinder(JWTTokenBasedUserFinder):
             else:
                 raise exc
 
+    def map_exception(self, ex):
+
+        if isinstance(ex, exceptions.ExpiredSignatureError):
+            return ExpiredSignatureException(str(ex))
+
+        if isinstance(ex, exceptions.InvalidSignatureError):
+            return InvalidSignatureException(str(ex))
+
+        if isinstance(ex, exceptions.InvalidAudienceError):
+            return InvalidAudienceException(str(ex))
+
+        if isinstance(ex, exceptions.InvalidIssuerError):
+            return InvalidIssuerException(str(ex))
+
+        if isinstance(ex, exceptions.InvalidIssuedAtError):
+            return InvalidIssuedAtException(str(ex))
+
+        if isinstance(ex, exceptions.ImmatureSignatureError):
+            return ImmatureSignatureException(str(ex))
+
+        if isinstance(ex, exceptions.InvalidAlgorithmError):
+            return InvalidAlgorithmException(str(ex))
+
+        if isinstance(ex, exceptions.MissingRequiredClaimError):
+            return MissingRequiredClaimException(str(ex))
+
+        if isinstance(ex, exceptions.PyJWTError):
+            return JWTException(str(ex))
+
+        return None
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class HS256JWTTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
+class JwtTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
     """
     JWT令牌生成器
 
@@ -227,11 +207,14 @@ class HS256JWTTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
     """
 
     # 加密key
-    hs256_secret = _DEFAULT_HS256_SECRET
+    jwt_algorithm_and_key = jwtalg.HmacAlgorithm()
 
     def generate_token(self, user, **kwargs):
         jwt_payload = self.user_to_jwt_payload(user)
-        return jwt.encode(jwt_payload, self.hs256_secret, algorithm='HS256')
+        return jwt.encode(jwt_payload,
+                          self.jwt_algorithm_and_key.encoding_secret_key,
+                          algorithm=self.jwt_algorithm_and_key.algorithm_name
+                          )
 
     @abc.abstractmethod
     def user_to_jwt_payload(self, user) -> Optional[Dict[str, Any]]:
