@@ -42,6 +42,9 @@ class JwtAlgorithmAndKey(object, metaclass=abc.ABCMeta):
 
 
 class HmacAlgorithm(JwtAlgorithmAndKey):
+    """
+    HMAC签名算法
+    """
 
     def __init__(self, alg_name=None, *, key=None):
         self._algorithm_name = alg_name or 'HS256'
@@ -57,9 +60,30 @@ class HmacAlgorithm(JwtAlgorithmAndKey):
 
 
 class RsaAlgorithm(JwtAlgorithmAndKey):
+    """
+    RSA签名算法
+
+    提示:
+        生成密钥文件 (without passphrase):
+        openssl genrsa -out rsa_private.key 2048
+        openssl rsa -in rsa_private.key -pubout -out rsa_public.key
+
+        生成密钥文件 (with passphrase)
+        openssl genrsa -aes256 -passout pass:<passphrase> -out rsa_aes_private.key 2048
+        openssl rsa -in rsa_aes_private.key -passin pass:<passphrase> -pubout -out rsa_public.key
+    """
 
     def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):
+        if isinstance(public_key, str):
+            public_key = public_key.encode('utf-8')
+
+        if isinstance(private_key, str):
+            private_key = private_key.encode('utf-8')
+
         if passphrase is not None:
+            if isinstance(passphrase, str):
+                passphrase = passphrase.encode('utf-8')
+
             private_key = serialization.load_pem_private_key(private_key,
                                                              password=passphrase,
                                                              backend=default_backend())
