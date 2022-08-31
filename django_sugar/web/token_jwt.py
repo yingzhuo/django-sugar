@@ -221,12 +221,13 @@ class JwtTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
         """
         用户对象转换成字典类型，以便生成JWT令牌
 
-        特殊claim键共有五个:
-        “exp” (Expiration Time) Claim (UTC)
-        “nbf” (Not Before Time) Claim (UTC)
-        “iss” (Issuer) Claim
-        “aud” (Audience) Claim
-        “iat” (Issued At) Claim
+        提示:
+            特殊claim键共有以下五个:
+            “exp” (Expiration Time) Claim (UTC)
+            “nbf” (Not Before Time) Claim (UTC)
+            “iss” (Issuer) Claim
+            “aud” (Audience) Claim
+            “iat” (Issued At) Claim
 
         :param user: 用户对象
         :return: 字典
