@@ -11,14 +11,14 @@ r"""
 """
 import datetime
 
-from django_sugar import lang, assert_type
+from django_sugar import assert_type
 from django_sugar.valueobject import abstractfield
 
 _DEFAULT_DATETIME_FORMAT = '%Y-%m-%d'
 _DEFAULT_DELIMITER = '@@'
 
 
-class DateRange(lang.PairLike):
+class DateRange(object):
     """
     日期范围
 

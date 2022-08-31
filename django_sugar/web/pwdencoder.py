@@ -11,7 +11,7 @@ r"""
 """
 import abc
 
-from django_sugar.lang import codec, strtool, base64
+from django_sugar import lang
 
 # 支持的加密算法
 # 其中reverse算法和noop算法只建议用在开发环境
@@ -61,22 +61,22 @@ class CompositePasswordEncoder(PasswordEncoder):
             return '{noop}%s' % raw_password
 
         if self.encoding_algorithm == 'md5':
-            return '{md5}%s' % codec.md5(raw_password)
+            return '{md5}%s' % lang.md5(raw_password)
 
         if self.encoding_algorithm == 'sha1':
-            return '{sha1}%s' % codec.sha1(raw_password)
+            return '{sha1}%s' % lang.sha1(raw_password)
 
         if self.encoding_algorithm == 'sha256':
-            return '{sha256}%s' % codec.sha256(raw_password)
+            return '{sha256}%s' % lang.sha256(raw_password)
 
         if self.encoding_algorithm == 'sha512':
-            return '{sha512}%s' % codec.sha512(raw_password)
+            return '{sha512}%s' % lang.sha512(raw_password)
 
         if self.encoding_algorithm == 'reverse':
-            return '{reverse}%s' % strtool.reverse(raw_password)
+            return '{reverse}%s' % lang.reverse(raw_password)
 
         if self.encoding_algorithm == 'base64':
-            return '{base64}%s' % base64.base64_urlsafe_encode(raw_password)
+            return '{base64}%s' % lang.base64_urlsafe_encode(raw_password)
 
         return None
 
@@ -90,21 +90,21 @@ class CompositePasswordEncoder(PasswordEncoder):
             return encoded_password[len('{noop}'):] == raw_password
 
         if encoded_password.startswith('{md5}'):
-            return encoded_password[len('{md5}'):] == codec.md5(raw_password)
+            return encoded_password[len('{md5}'):] == lang.md5(raw_password)
 
         if encoded_password.startswith('{sha1}'):
-            return encoded_password[len('{sha1}'):] == codec.sha1(raw_password)
+            return encoded_password[len('{sha1}'):] == lang.sha1(raw_password)
         if encoded_password.startswith('{sha256}'):
-            return encoded_password[len('{sha256}'):] == codec.sha256(raw_password)
+            return encoded_password[len('{sha256}'):] == lang.sha256(raw_password)
 
         if encoded_password.startswith('{sha512}'):
-            return encoded_password[len('{sha512}'):] == codec.sha512(raw_password)
+            return encoded_password[len('{sha512}'):] == lang.sha512(raw_password)
 
         if encoded_password.startswith('{reverse}'):
-            return strtool.reverse(encoded_password[len('{reverse}'):]) == raw_password
+            return lang.reverse(encoded_password[len('{reverse}'):]) == raw_password
 
         if encoded_password.startswith('{base64}'):
-            return base64.base64_urlsafe_decode(encoded_password[len('{base64}'):]) == raw_password
+            return lang.base64_urlsafe_decode(encoded_password[len('{base64}'):]) == raw_password
 
         # 默认按明文处理
         return raw_password == encoded_password

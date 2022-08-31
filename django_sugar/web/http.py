@@ -9,7 +9,7 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar.lang import typetest
+from django_sugar import lang
 
 
 def get_client_sent_data(request, /, *, default_values=None, **kwargs):
@@ -32,7 +32,7 @@ def get_client_sent_data(request, /, *, default_values=None, **kwargs):
 
     for k in data:
         v = data[k]
-        if typetest.is_list(v):
+        if lang.is_list(v):
             data[k] = v[-1]
 
     return data
@@ -105,5 +105,3 @@ class HttpRequestDescriptor(object):
 
     def __repr__(self):
         return str(self)
-
-# ----------------------------------------------------------------------------------------------------------------------

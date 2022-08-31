@@ -13,7 +13,7 @@ import abc
 
 from rest_framework import authentication
 
-from django_sugar.lang import reflection
+from django_sugar import lang
 
 
 class Authenticator(authentication.BaseAuthentication, metaclass=abc.ABCMeta):
@@ -44,10 +44,10 @@ class TokenBasedAuthenticator(Authenticator):
 
     def authenticate(self, request):
 
-        resolve_token = reflection.get_callable_attribute(self,
-                                                          'resolve_token',
-                                                          raise_error=True,
-                                                          error_msg='forgot TokenResolver mixin?')
+        resolve_token = lang.get_callable_attribute(self,
+                                                    'resolve_token',
+                                                    raise_error=True,
+                                                    error_msg='forgot TokenResolver mixin?')
 
         # noinspection PyBroadException
         try:
@@ -61,10 +61,10 @@ class TokenBasedAuthenticator(Authenticator):
         if not token:
             return None
 
-        get_user_by_token = reflection.get_callable_attribute(self,
-                                                              'get_user_by_token',
-                                                              raise_error=True,
-                                                              error_msg='forgot TokenBasedUserFinder mixin?')
+        get_user_by_token = lang.get_callable_attribute(self,
+                                                        'get_user_by_token',
+                                                        raise_error=True,
+                                                        error_msg='forgot TokenBasedUserFinder mixin?')
 
         # noinspection PyBroadException
         try:

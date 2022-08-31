@@ -12,7 +12,7 @@ r"""
 import abc
 import string
 
-from django_sugar.lang import strtool, base64, uuid, codec, random
+from django_sugar import lang
 
 
 class TokenResolver(object, metaclass=abc.ABCMeta):
@@ -71,7 +71,7 @@ class QueryTokenResolver(TokenResolver):
 
     def resolve_token(self, request, **kwargs):
         token_value = request.GET.get(self.token_parameter_name, None)
-        token_value = strtool.blank_to_none(token_value)
+        token_value = lang.blank_to_none(token_value)
         return token_value
 
 
@@ -90,9 +90,9 @@ class HeaderTokenResolver(TokenResolver):
 
     def resolve_token(self, request, **kwargs):
         token_value = request.headers.get(self.header_name, None)
-        token_value = strtool.blank_to_none(token_value)
+        token_value = lang.blank_to_none(token_value)
 
-        if token_value is None or not strtool.startswith(token_value, self.token_value_prefix, ignore_cases=True):
+        if token_value is None or not lang.startswith(token_value, self.token_value_prefix, ignore_cases=True):
             # 找不到此请求头或者值不以指定的前缀开始
             return None
         else:
@@ -123,7 +123,7 @@ class BasicTokenResolver(HeaderTokenResolver):
     def resolve_username_and_password(self, request, **kwargs):
         token = self.resolve_token(request, **kwargs)
         if token:
-            uap = base64.base64_standard_decode(token).split(':', 2)
+            uap = lang.base64_standard_decode(token).split(':', 2)
             return uap[0], uap[1]
         else:
             return None, None
@@ -184,7 +184,7 @@ class RandomUUIDTokenGenerator(TokenGenerator):
     remove_uuid_hyphen = False
 
     def generate_token(self, user, **kwargs):
-        return uuid.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
+        return lang.random_uuid(remove_hyphen=self.remove_uuid_hyphen)
 
 
 class MD5TokenGenerator(TokenGenerator):
@@ -195,7 +195,7 @@ class MD5TokenGenerator(TokenGenerator):
     """
 
     def generate_token(self, user, **kwargs):
-        return codec.md5(str(user))
+        return lang.md5(str(user))
 
 
 class SimpleRandomStringTokenGenerator(TokenGenerator):
@@ -209,7 +209,7 @@ class SimpleRandomStringTokenGenerator(TokenGenerator):
     chars_to_choice = string.ascii_letters
 
     def generate_token(self, user, **kwargs):
-        return random.random_string(self.length, chars=self.chars_to_choice)
+        return lang.random_string(self.length, chars=self.chars_to_choice)
 
 
 # ----------------------------------------------------------------------------------------------------------------------

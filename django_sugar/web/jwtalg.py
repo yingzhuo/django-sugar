@@ -14,7 +14,7 @@ import abc
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-from django_sugar.lang import strtool
+from django_sugar import lang
 
 
 class JwtAlgorithmAndKey(object, metaclass=abc.ABCMeta):
@@ -76,9 +76,9 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
     """
 
     def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):
-        public_key = strtool.to_bytes_if_necessary(public_key)
-        private_key = strtool.to_bytes_if_necessary(private_key)
-        passphrase = strtool.to_bytes_if_necessary(passphrase)
+        public_key = lang.to_bytes_if_necessary(public_key)
+        private_key = lang.to_bytes_if_necessary(private_key)
+        passphrase = lang.to_bytes_if_necessary(passphrase)
 
         if passphrase is not None:
             private_key = serialization.load_pem_private_key(private_key,

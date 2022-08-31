@@ -9,13 +9,13 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar import lang, assert_type
+from django_sugar import assert_type
 from django_sugar.valueobject import abstractfield
 
 _DEFAULT_DELIMITER = '@@'
 
 
-class IntRange(lang.PairLike):
+class IntRange(object):
     """
     整数范围
     """

@@ -15,7 +15,7 @@ from typing import Optional, Dict, Any
 import jwt
 from jwt import exceptions
 
-from django_sugar.lang import reflection
+from django_sugar import lang
 from django_sugar.web import token, jwtalg
 
 
@@ -133,7 +133,7 @@ class JwtTokenBasedUserFinder(token.TokenBasedUserFinder):
             return None
 
         # 尝试调用钩子方法转换类型
-        convert_user = reflection.get_callable_attribute(self, 'convert_user', raise_error=False)
+        convert_user = lang.get_callable_attribute(self, 'convert_user', raise_error=False)
         if convert_user:
             return convert_user(user_info)
         else:

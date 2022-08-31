@@ -9,8 +9,8 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar.valueobject.color import Color, ColorField
-from django_sugar.valueobject.daterange import DateRange, DateRangeField
-from django_sugar.valueobject.intrange import IntRange, IntRangeField
-from django_sugar.valueobject.intrangecollection import IntRangeCollection, IntRangeCollectionField
-from django_sugar.valueobject.password import PasswordField
+from .color import *
+from .daterange import *
+from .intrange import *
+from .intrangecollection import *
+from .password import *
