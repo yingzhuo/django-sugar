@@ -11,6 +11,17 @@ r"""
 """
 
 
+def to_bytes_if_necessary(string, *, charset='utf-8'):
+    """
+    如有必要，转换成bytes类型
+
+    :param string: 字符串
+    :param charset: 字符串编码
+    :return: 结果
+    """
+    return string.encode(charset) if isinstance(string, str) else string
+
+
 def reverse(string):
     """
     字符串反向
