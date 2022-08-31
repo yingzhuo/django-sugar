@@ -50,7 +50,7 @@ class HmacAlgorithm(JwtAlgorithmAndKey):
 
     def __init__(self, alg_name=None, *, key=None):
         self._algorithm_name = alg_name or 'HS256'
-        self._secret_key = key or ('HMACAlgorithm' * 3)[::-1]
+        self._secret_key = key or lang.reverse('HMACAlgorithm' * 3)
 
     @property
     def encoding_secret_key(self):
@@ -95,3 +95,48 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
     @property
     def decoding_secret_key(self):
         return self._public_key
+
+
+class EcdsaAlgorithm(JwtAlgorithmAndKey):
+    """
+    ECDSA签名算法
+
+    提示:
+        生成密钥文件:
+        openssl ecparam -name prime256v1 -genkey -noout -out ecdsa_private.key
+        openssl ec -in ecdsa_private.key -pubout -out ecdsa_public.key
+    """
+
+    def __init__(self, alg_name=None, *, public_key, private_key):
+        public_key = lang.to_bytes_if_necessary(public_key)
+        private_key = lang.to_bytes_if_necessary(private_key)
+        self._algorithm_name = alg_name or 'ES256K'
+        self._public_key = public_key
+        self._private_key = private_key
+
+    @property
+    def encoding_secret_key(self):
+        return self._private_key
+
+    @property
+    def decoding_secret_key(self):
+        return self._public_key
+
+
+class NoneAlgorithm(JwtAlgorithmAndKey):
+    """
+    无签名算法
+
+    提示:
+        不可用于生产环境
+    """
+
+    _algorithm_name = 'none'
+
+    @property
+    def encoding_secret_key(self):
+        return 'none'
+
+    @property
+    def decoding_secret_key(self):
+        return 'none'
