@@ -139,7 +139,7 @@ class NoneAlgorithm(JwtAlgorithmAndKey):
         不可用于生产环境
     """
 
-    _algorithm_name = 'noop'
+    _algorithm_name = 'none'
 
     @property
     def encoding_secret_key(self):
