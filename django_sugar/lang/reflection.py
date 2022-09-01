@@ -9,12 +9,12 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from django_sugar.lang import typetest
+from django_sugar import lang
 
 
-def get_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
+def get_attr(obj, attr_name, *, raise_error=False, error_msg=None):
     try:
-        return obj.__getattribute__(attr_name)
+        return getattr(obj, attr_name)
     except AttributeError:
         if raise_error:
             msg = error_msg or ("object has no attribute '%s'" % attr_name)
@@ -23,13 +23,35 @@ def get_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
             return None
 
 
-def get_callable_attribute(obj, attr_name, *, raise_error=False, error_msg=None):
-    attr = get_attribute(obj, attr_name, raise_error=False)
+def get_callable_attr(obj, attr_name, *, raise_error=False, error_msg=None):
+    attr = get_attr(obj, attr_name, raise_error=False)
 
-    if typetest.is_callable(attr):
+    if lang.is_callable(attr):
         return attr
     elif raise_error:
         msg = error_msg or ("object has no callable attribute '%s'" % attr_name)
         raise TypeError(msg)
     else:
         return None
+
+
+def get_attr_names(obj):
+    return [x for x in dir(obj) if (not x.startswith('__') and (not x.endswith('__')))]
+
+
+def get_callable_attr_names(obj):
+    ret = []
+    for attr_name in get_attr_names(obj):
+        attr = getattr(obj, attr_name)
+        if lang.is_callable(attr):
+            ret.append(attr_name)
+    return ret
+
+
+def get_non_callable_attr_names(obj):
+    ret = []
+    for attr_name in get_attr_names(obj):
+        attr = getattr(obj, attr_name)
+        if not lang.is_callable(attr):
+            ret.append(attr_name)
+    return ret

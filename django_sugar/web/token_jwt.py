@@ -133,7 +133,7 @@ class JwtTokenBasedUserFinder(token.TokenBasedUserFinder):
             return None
 
         # 尝试调用钩子方法转换类型
-        convert_user = lang.get_callable_attribute(self, 'convert_user', raise_error=False)
+        convert_user = lang.get_callable_attr(self, 'convert_user', raise_error=False)
         if convert_user:
             return convert_user(user_info)
         else:
