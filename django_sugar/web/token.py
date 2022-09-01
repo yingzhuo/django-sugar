@@ -49,7 +49,7 @@ class CompositeTokenResolver(TokenResolver):
         for token_resolver in self.get_token_resolvers():
             # noinspection PyBroadException
             try:
-                ret = token_resolver.resolve_token(request, kwargs)
+                ret = token_resolver.resolve_token(request, **kwargs)
                 if ret is not None:
                     return ret
             except Exception:
