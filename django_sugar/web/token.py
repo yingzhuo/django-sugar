@@ -33,33 +33,6 @@ class TokenResolver(object, metaclass=abc.ABCMeta):
         """
 
 
-class CompositeTokenResolver(TokenResolver):
-    """
-    复合型令牌解析器
-
-    代理其他类型令牌解析器，并将第一个能正确解析出令牌的解析的结果返回。
-    """
-
-    token_resolver_classes = []
-
-    def __len__(self):
-        return len(self.token_resolver_classes)
-
-    def resolve_token(self, request, **kwargs):
-        for token_resolver in self.get_token_resolvers():
-            # noinspection PyBroadException
-            try:
-                ret = token_resolver.resolve_token(request, **kwargs)
-                if ret is not None:
-                    return ret
-            except Exception:
-                continue
-        return None
-
-    def get_token_resolvers(self):
-        return [x() for x in self.token_resolver_classes]
-
-
 class QueryTokenResolver(TokenResolver):
     """
     令牌解析器具体实现
@@ -145,15 +118,42 @@ class FixedTokenResolver(TokenResolver):
         return self.fixed_token
 
 
-class AlwaysNoneTokenResolver(TokenResolver):
+class CompositeTokenResolver(TokenResolver):
     """
-    令牌解析器具体实现
+    复合型令牌解析器
 
-    永远不能解析出令牌
+    代理其他类型令牌解析器，并将第一个能正确解析出令牌的解析的结果返回。
     """
+
+    token_resolver_classes = [HeaderTokenResolver, BearerTokenResolver, BasicTokenResolver, ]
+
+    def __len__(self):
+        return len(self.token_resolver_classes)
+
+    def __iter__(self):
+        for t in self.token_resolver_classes:
+            yield t()
+
+    def __getitem__(self, item):
+        ret = self.token_resolver_classes[item]
+        if lang.is_iterable(ret):
+            return map(lambda x: x(), ret)
+        else:
+            return ret()
 
     def resolve_token(self, request, **kwargs):
+        for token_resolver in self.get_token_resolvers():
+            # noinspection PyBroadException
+            try:
+                ret = token_resolver.resolve_token(request, **kwargs)
+                if ret is not None:
+                    return ret
+            except Exception:
+                continue
         return None
+
+    def get_token_resolvers(self):
+        return [x() for x in self.token_resolver_classes]
 
 
 # ----------------------------------------------------------------------------------------------------------------------
