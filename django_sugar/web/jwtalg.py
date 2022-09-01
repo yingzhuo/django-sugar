@@ -76,6 +76,10 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
     """
 
     def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):
+        alg_name = alg_name or 'RS256'
+        if alg_name not in {'RS256', 'RS384', 'RS512', 'PS256', 'PS384', 'PS512'}:
+            raise ValueError(f"Algorithm '{alg_name} not supported.")
+
         public_key = lang.to_bytes_if_necessary(public_key)
         private_key = lang.to_bytes_if_necessary(private_key)
         passphrase = lang.to_bytes_if_necessary(passphrase)
@@ -108,9 +112,13 @@ class EcdsaAlgorithm(JwtAlgorithmAndKey):
     """
 
     def __init__(self, alg_name=None, *, public_key, private_key):
+        alg_name = alg_name or 'ES256K'
+        if alg_name not in {'ES256', 'ES256K', 'ES384', 'ES521', 'ES512'}:
+            raise ValueError(f"Algorithm '{alg_name} not supported.")
+
         public_key = lang.to_bytes_if_necessary(public_key)
         private_key = lang.to_bytes_if_necessary(private_key)
-        self._algorithm_name = alg_name or 'ES256K'
+        self._algorithm_name = alg_name
         self._public_key = public_key
         self._private_key = private_key
 
@@ -131,12 +139,12 @@ class NoneAlgorithm(JwtAlgorithmAndKey):
         不可用于生产环境
     """
 
-    _algorithm_name = 'none'
+    _algorithm_name = 'noop'
 
     @property
     def encoding_secret_key(self):
-        return 'none'
+        return None
 
     @property
     def decoding_secret_key(self):
-        return 'none'
+        return None

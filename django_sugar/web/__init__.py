@@ -9,9 +9,33 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
+from jwt import unregister_algorithm, register_algorithm, algorithms
+
 from .auth import *
 from .http import *
 from .jwtalg import *
 from .pwdencoder import *
 from .token import *
 from .token_jwt import *
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# 调整JWT的none算法, 疑似是bug
+# https://github.com/jpadilla/pyjwt/issues/795
+# ----------------------------------------------------------------------------------------------------------------------
+
+class MyNoneAlg(algorithms.NoneAlgorithm):
+    def verify(self, msg, key, sig):
+        return True
+
+    @staticmethod
+    def to_jwk(key_obj):
+        pass
+
+    @staticmethod
+    def from_jwk(jwk):
+        pass
+
+
+unregister_algorithm('none')
+register_algorithm('none', MyNoneAlg())
