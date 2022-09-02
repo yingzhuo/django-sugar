@@ -15,6 +15,7 @@ import re
 from django_sugar import lang
 
 
+# I like spring-security
 class PasswordEncoder(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
@@ -101,6 +102,7 @@ class ReversePasswordEncoder(PasswordEncoder):
 
 _INNER_ENCODERS = {
     'noop': NoopPasswordEncoder(ignore_cases=False),
+    'noop_ci': NoopPasswordEncoder(ignore_cases=True),
     'md5': MD5PasswordEncoder(),
     'sha1': SHA1PasswordEncoder(),
     'sha256': SHA256PasswordEncoder(),
@@ -158,7 +160,7 @@ class DelegatingPasswordEncoder(PasswordEncoder):
 
     @staticmethod
     def _get_alg_and_real_encoded_password(encoded_password):
-        alg = re.sub(r'^{([a-z0-9]+)}.*$', r'\1', encoded_password)
+        alg = re.sub(r'^{([a-z0-9_]+)}.*$', r'\1', encoded_password)
         if alg == encoded_password:
             return 'noop', encoded_password
-        return alg, re.sub(r'^{[a-z0-9]+}(.*)$', r'\1', encoded_password)
+        return alg, re.sub(r'^{[a-z0-9_]+}(.*)$', r'\1', encoded_password)
