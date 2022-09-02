@@ -22,16 +22,6 @@ def to_bytes_if_necessary(string, *, charset='utf-8'):
     return string.encode(charset) if isinstance(string, str) else string
 
 
-def reverse(string):
-    """
-    字符串反向
-
-    :param string: 字符串
-    :return: 结果
-    """
-    return string[::-1]
-
-
 def is_empty_or_none(string):
     """
     判断字符串是否为空串或None

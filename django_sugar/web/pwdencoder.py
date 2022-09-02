@@ -10,23 +10,9 @@ r"""
 
 """
 import abc
-
-import bcrypt
+import re
 
 from django_sugar import lang
-
-# 支持的加密算法
-# 其中reverse算法和noop算法只建议用在开发环境
-_SUPPORTED_ALGORITHMS = [
-    'noop',
-    'bcrypt',
-    'md5',
-    'sha1',
-    'sha256',
-    'sha512',
-    'base64',
-    'reverse',
-]
 
 
 class PasswordEncoder(object, metaclass=abc.ABCMeta):
@@ -40,88 +26,136 @@ class PasswordEncoder(object, metaclass=abc.ABCMeta):
         :return: 密码的密文
         """
 
-    @abc.abstractmethod
     def password_matches(self, raw_password, encoded_password):
         """
         比较密码原文和密文是否匹配
 
         :param raw_password: 密码原文
         :param encoded_password: 密码密文
-        :return: 配置时返回True，否则返回False
+        :return: 匹配时返回True，否则返回False
         """
+        return self.encode_password(raw_password) == encoded_password
+
+
+class NoopPasswordEncoder(PasswordEncoder):
+    ignore_cases = None
+
+    def __init__(self, *, ignore_cases=False):
+        if self.ignore_cases is None:
+            self.ignore_cases = ignore_cases
+
+    def encode_password(self, raw_password):
+        return raw_password
+
+    def password_matches(self, raw_password, encoded_password):
+        if self.ignore_cases:
+            return raw_password.lower() == encoded_password.lower()
+        else:
+            return raw_password == encoded_password
+
+
+class MD5PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.md5(raw_password)
+
+
+class SHA1PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.sha1(raw_password)
+
+
+class SHA256PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.sha256(raw_password)
+
+
+class SHA512PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.sha512(raw_password)
+
+
+class SHA224PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.sha224(raw_password)
+
+
+class Base64PasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return lang.base64_urlsafe_encode(raw_password)
+
+    def password_matches(self, raw_password, encoded_password):
+        return lang.base64_urlsafe_decode(encoded_password) == raw_password
+
+
+class ReversePasswordEncoder(PasswordEncoder):
+
+    def encode_password(self, raw_password):
+        return raw_password[::-1]
+
+
+_INNER_ENCODERS = {
+    'noop': NoopPasswordEncoder(ignore_cases=False),
+    'md5': MD5PasswordEncoder(),
+    'sha1': SHA1PasswordEncoder(),
+    'sha256': SHA256PasswordEncoder(),
+    'sha512': SHA512PasswordEncoder(),
+    'sha224': SHA224PasswordEncoder(),
+    'base64': Base64PasswordEncoder(),
+    'reverse': ReversePasswordEncoder(),
+}
+
+# noinspection PyBroadException
+try:
+    import bcrypt
+
+
+    class BcryptPasswordEncoder(PasswordEncoder):
+
+        def encode_password(self, raw_password):
+            salt = bcrypt.gensalt(rounds=6)
+            byte_array = bcrypt.hashpw(raw_password.encode('utf-8'), salt)
+            return str(byte_array, 'utf-8')
+
+        def password_matches(self, raw_password, encoded_password):
+            raw_password = raw_password.encode('utf-8')
+            encoded_password = encoded_password.encode('utf-8')
+            return bcrypt.checkpw(raw_password, encoded_password)
+
+
+    _INNER_ENCODERS.update(
+        {
+            'bcrypt': BcryptPasswordEncoder(),
+        }
+    )
+
+    _BCRYPT_PRESENT = True
+except Exception:
+    _BCRYPT_PRESENT = False
 
 
 class DelegatingPasswordEncoder(PasswordEncoder):
-    # 加密用算法
-    encoding_algorithm = 'bcrypt'
+    encoding_algorithm = None
+
+    def __init__(self, *, encoding_algorithm=None):
+        if self.encoding_algorithm is None:
+            if encoding_algorithm:
+                self.encoding_algorithm = encoding_algorithm
+            else:
+                self.encoding_algorithm = 'bcrypt' if _BCRYPT_PRESENT else 'md5'
 
     def encode_password(self, raw_password):
-        self._check_algorithm()
-
-        if raw_password is None:
-            return None
-
-        if self.encoding_algorithm == 'bcrypt':
-            salt = bcrypt.gensalt(rounds=6)
-            return '{bcrypt}%s' % str(bcrypt.hashpw(raw_password.encode('utf-8'), salt), 'utf-8')
-
-        if self.encoding_algorithm == 'noop':
-            return '{noop}%s' % raw_password
-
-        if self.encoding_algorithm == 'md5':
-            return '{md5}%s' % lang.md5(raw_password)
-
-        if self.encoding_algorithm == 'sha1':
-            return '{sha1}%s' % lang.sha1(raw_password)
-
-        if self.encoding_algorithm == 'sha256':
-            return '{sha256}%s' % lang.sha256(raw_password)
-
-        if self.encoding_algorithm == 'sha512':
-            return '{sha512}%s' % lang.sha512(raw_password)
-
-        if self.encoding_algorithm == 'reverse':
-            return '{reverse}%s' % lang.reverse(raw_password)
-
-        if self.encoding_algorithm == 'base64':
-            return '{base64}%s' % lang.base64_urlsafe_encode(raw_password)
-
-        return None
+        ea = self.encoding_algorithm
+        encoder = _INNER_ENCODERS.get(ea)
+        return '{%s}%s' % (ea, encoder.encode_password(raw_password))
 
     def password_matches(self, raw_password, encoded_password):
-        self._check_algorithm()
-
-        if raw_password is None or encoded_password is None:
-            return False
-
-        if encoded_password.startswith('{bcrypt}'):
-            encoded_password = encoded_password[len('{bcrypt}'):].encode('utf-8')
-            raw_password = raw_password.encode('utf-8')
-            return bcrypt.checkpw(raw_password, encoded_password)
-
-        if encoded_password.startswith('{noop}'):
-            return encoded_password[len('{noop}'):] == raw_password
-
-        if encoded_password.startswith('{md5}'):
-            return encoded_password[len('{md5}'):] == lang.md5(raw_password)
-
-        if encoded_password.startswith('{sha1}'):
-            return encoded_password[len('{sha1}'):] == lang.sha1(raw_password)
-        if encoded_password.startswith('{sha256}'):
-            return encoded_password[len('{sha256}'):] == lang.sha256(raw_password)
-
-        if encoded_password.startswith('{sha512}'):
-            return encoded_password[len('{sha512}'):] == lang.sha512(raw_password)
-
-        if encoded_password.startswith('{reverse}'):
-            return lang.reverse(encoded_password[len('{reverse}'):]) == raw_password
-
-        if encoded_password.startswith('{base64}'):
-            return lang.base64_urlsafe_decode(encoded_password[len('{base64}'):]) == raw_password
-
-        # 默认按明文处理
-        return raw_password == encoded_password
-
-    def _check_algorithm(self):
-        if self.encoding_algorithm not in _SUPPORTED_ALGORITHMS:
-            raise ValueError("'%s' algorithm is not supported")
+        ea = self.encoding_algorithm
+        encoder = _INNER_ENCODERS.get(ea)
+        encoded_password = re.sub(r'^{[a-z0-9]+}(.*)$', r'\1', encoded_password)  # 去除前缀
+        return encoder.password_matches(raw_password, encoded_password)
