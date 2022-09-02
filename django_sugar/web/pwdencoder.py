@@ -140,22 +140,25 @@ except Exception:
 
 
 class DelegatingPasswordEncoder(PasswordEncoder):
-    encoding_algorithm = None
-
-    def __init__(self, *, encoding_algorithm=None):
-        if self.encoding_algorithm is None:
-            if encoding_algorithm:
-                self.encoding_algorithm = encoding_algorithm
-            else:
-                self.encoding_algorithm = 'bcrypt' if _BCRYPT_PRESENT else 'md5'
+    encoding_algorithm = 'bcrypt' if _BCRYPT_PRESENT else 'md5'
 
     def encode_password(self, raw_password):
-        ea = self.encoding_algorithm
-        encoder = _INNER_ENCODERS.get(ea)
-        return '{%s}%s' % (ea, encoder.encode_password(raw_password))
+        alg_id = self.encoding_algorithm
+        encoder = _INNER_ENCODERS.get(alg_id)
+        if encoder is None:
+            raise ValueError("alg_id: '%s' not supported." % alg_id)
+        return '{%s}%s' % (alg_id, encoder.encode_password(raw_password))
 
     def password_matches(self, raw_password, encoded_password):
-        ea = self.encoding_algorithm
-        encoder = _INNER_ENCODERS.get(ea)
-        encoded_password = re.sub(r'^{[a-z0-9]+}(.*)$', r'\1', encoded_password)  # 去除前缀
-        return encoder.password_matches(raw_password, encoded_password)
+        alg_id, real_encoded_pwd = self._get_alg_and_real_encoded_password(encoded_password)
+        encoder = _INNER_ENCODERS.get(alg_id)
+        if encoder is None:
+            raise ValueError("alg_id: '%s' not supported." % alg_id)
+        return encoder.password_matches(raw_password, real_encoded_pwd)
+
+    @staticmethod
+    def _get_alg_and_real_encoded_password(encoded_password):
+        alg = re.sub(r'^{([a-z0-9]+)}.*$', r'\1', encoded_password)
+        if alg == encoded_password:
+            return 'noop', encoded_password
+        return alg, re.sub(r'^{[a-z0-9]+}(.*)$', r'\1', encoded_password)
