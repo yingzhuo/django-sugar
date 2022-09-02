@@ -45,7 +45,7 @@ class TokenBasedAuthenticator(Authenticator):
     def authenticate(self, request):
 
         resolve_token = lang.get_callable_attr(self,
-                                                    'resolve_token',
+                                               'resolve_token',
                                                raise_error=True,
                                                error_msg='forgot TokenResolver mixin?')
 
@@ -62,7 +62,7 @@ class TokenBasedAuthenticator(Authenticator):
             return None
 
         get_user_by_token = lang.get_callable_attr(self,
-                                                        'get_user_by_token',
+                                                   'get_user_by_token',
                                                    raise_error=True,
                                                    error_msg='forgot TokenBasedUserFinder mixin?')
 

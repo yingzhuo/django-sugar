@@ -11,18 +11,21 @@ r"""
 """
 import abc
 
+import bcrypt
+
 from django_sugar import lang
 
 # 支持的加密算法
 # 其中reverse算法和noop算法只建议用在开发环境
 _SUPPORTED_ALGORITHMS = [
     'noop',
-    'reverse',
+    'bcrypt',
     'md5',
     'sha1',
     'sha256',
     'sha512',
     'base64',
+    'reverse',
 ]
 
 
@@ -48,14 +51,19 @@ class PasswordEncoder(object, metaclass=abc.ABCMeta):
         """
 
 
-class CompositePasswordEncoder(PasswordEncoder):
-    encoding_algorithm = 'md5'
+class DelegatingPasswordEncoder(PasswordEncoder):
+    # 加密用算法
+    encoding_algorithm = 'bcrypt'
 
     def encode_password(self, raw_password):
         self._check_algorithm()
 
         if raw_password is None:
             return None
+
+        if self.encoding_algorithm == 'bcrypt':
+            salt = bcrypt.gensalt(rounds=6)
+            return str(bcrypt.hashpw(raw_password.encode('utf-8'), salt), 'utf-8')
 
         if self.encoding_algorithm == 'noop':
             return '{noop}%s' % raw_password
@@ -85,6 +93,11 @@ class CompositePasswordEncoder(PasswordEncoder):
 
         if raw_password is None or encoded_password is None:
             return False
+
+        if encoded_password.startswith('{bcrypt}'):
+            encoded_password = encoded_password[len('{bcrypt}'):].encode('utf-8')
+            raw_password = raw_password.encode('utf-8')
+            return bcrypt.checkpw(raw_password, encoded_password)
 
         if encoded_password.startswith('{noop}'):
             return encoded_password[len('{noop}'):] == raw_password

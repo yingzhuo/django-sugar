@@ -134,9 +134,6 @@ class EcdsaAlgorithm(JwtAlgorithmAndKey):
 class NoneAlgorithm(JwtAlgorithmAndKey):
     """
     无签名算法
-
-    提示:
-        不可用于生产环境
     """
 
     _algorithm_name = 'none'
