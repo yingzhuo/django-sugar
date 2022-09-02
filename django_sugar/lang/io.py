@@ -12,9 +12,22 @@ r"""
 
 
 def read_file_as_bytes(filename) -> bytes:
+    """
+    读取二进制文件
+
+    :param filename: 文件
+    :return: 字节数组
+    """
     with open(filename, 'rb') as f:
         return f.read()
 
 
 def read_file_as_string(filename, *, charset='utf-8') -> str:
+    """
+    读取文本文件
+
+    :param filename: 文件
+    :param charset: 文件编码
+    :return: 文件内容
+    """
     return str(read_file_as_bytes(filename), charset)
