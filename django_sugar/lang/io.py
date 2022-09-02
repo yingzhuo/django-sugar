@@ -9,13 +9,8 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from .base64 import *
-from .choices import *
-from .codec import *
-from .integration import *
-from .io import *
-from .random import *
-from .reflection import *
-from .strtool import *
-from .typetest import *
-from .uuid import *
+
+
+def read_file_as_bytes(filename) -> bytes:
+    with open(filename, 'rb') as f:
+        return f.read()
