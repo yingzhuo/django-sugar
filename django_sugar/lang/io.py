@@ -14,3 +14,7 @@ r"""
 def read_file_as_bytes(filename) -> bytes:
     with open(filename, 'rb') as f:
         return f.read()
+
+
+def read_file_as_string(filename, *, charset='utf-8') -> str:
+    return str(read_file_as_bytes(filename), charset)

@@ -48,9 +48,13 @@ class HmacAlgorithm(JwtAlgorithmAndKey):
     HMAC签名算法
     """
 
-    def __init__(self, alg_name=None, *, key=None):
-        self._algorithm_name = alg_name or 'HS256'
-        self._secret_key = key or lang.reverse('HMACAlgorithm' * 3)
+    def __init__(self, alg_name=None, *, key):
+        alg_name = alg_name or 'HS256'
+        if alg_name not in {'HS256', 'HS384', 'HS512'}:
+            raise ValueError(f"Algorithm '{alg_name} not supported.")
+
+        self._algorithm_name = alg_name
+        self._secret_key = key
 
     @property
     def encoding_secret_key(self):
@@ -145,3 +149,65 @@ class NoneAlgorithm(JwtAlgorithmAndKey):
     @property
     def decoding_secret_key(self):
         return None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+def create_none_algorithm():
+    return NoneAlgorithm()
+
+
+def create_hs256_algorithm(key: str):
+    return HmacAlgorithm('HS256', key=key)
+
+
+def create_hs384_algorithm(key: str):
+    return HmacAlgorithm('HS384', key=key)
+
+
+def create_hs512_algorithm(key: str):
+    return HmacAlgorithm('HS512', key=key)
+
+
+def create_rs256_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('RS256', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_rs384_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('RS384', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_rs512_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('RS512', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_ps256_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('PS256', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_ps384_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('PS384', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_ps512_algorithm(public_key, private_key, passphrase=None):
+    return RsaAlgorithm('PS512', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_es256_algorithm(public_key, private_key):
+    return EcdsaAlgorithm('ES256', public_key=public_key, private_key=private_key)
+
+
+def create_es256k_algorithm(public_key, private_key):
+    return EcdsaAlgorithm('ES256K', public_key=public_key, private_key=private_key)
+
+
+def create_es384_algorithm(public_key, private_key):
+    return EcdsaAlgorithm('ES384', public_key=public_key, private_key=private_key)
+
+
+def create_es521_algorithm(public_key, private_key):
+    return EcdsaAlgorithm('ES521', public_key=public_key, private_key=private_key)
+
+
+def create_es512_algorithm(public_key, private_key):
+    return EcdsaAlgorithm('ES512', public_key=public_key, private_key=private_key)

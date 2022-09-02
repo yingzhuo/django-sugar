@@ -63,7 +63,7 @@ class DelegatingPasswordEncoder(PasswordEncoder):
 
         if self.encoding_algorithm == 'bcrypt':
             salt = bcrypt.gensalt(rounds=6)
-            return str(bcrypt.hashpw(raw_password.encode('utf-8'), salt), 'utf-8')
+            return '{bcrypt}%s' % str(bcrypt.hashpw(raw_password.encode('utf-8'), salt), 'utf-8')
 
         if self.encoding_algorithm == 'noop':
             return '{noop}%s' % raw_password
