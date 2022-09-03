@@ -148,35 +148,6 @@ class EcdsaAlgorithm(JwtAlgorithmAndKey):
         return self._public_key
 
 
-class Ed25519Algorithm(JwtAlgorithmAndKey):
-    """
-    ED25519签名算法
-
-    参考:
-        https://www.wpoven.com/tools/
-    """
-
-    def __init__(self, *, public_key, private_key, passphrase=None):
-        public_key = lang.ensure_bytes(public_key)
-        private_key = lang.ensure_bytes(private_key)
-        passphrase = lang.ensure_bytes(passphrase)
-
-        if passphrase is not None:
-            private_key = serialization.load_pem_private_key(private_key,
-                                                             password=passphrase,
-                                                             backend=default_backend())
-
-        self._algorithm_name = 'EdDSA'
-        self._public_key = public_key
-        self._private_key = private_key
-
-    def encoding_secret_key(self):
-        return self._private_key
-
-    def decoding_secret_key(self):
-        return self._public_key
-
-
 class NoneAlgorithm(JwtAlgorithmAndKey):
     """
     无签名算法
@@ -253,7 +224,3 @@ def create_es521_algorithm(public_key, private_key, passphrase=None):
 
 def create_es512_algorithm(public_key, private_key, passphrase=None):
     return EcdsaAlgorithm('ES512', public_key=public_key, private_key=private_key, passphrase=passphrase)
-
-
-def create_ed25519_algorithm(public_key, private_key, passphrase=None):
-    return Ed25519Algorithm(public_key=public_key, private_key=private_key, passphrase=passphrase)
