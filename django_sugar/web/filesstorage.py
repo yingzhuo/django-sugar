@@ -56,6 +56,6 @@ class SmartFileSystemFileStorage(storage.FileSystemStorage):
     def save(self, name, content, max_length=None):
         if isinstance(name, (str,)):
             name = self.file_save_policy.get_filename_prefix() + name
-            name = name + self.file_save_policy + self.file_save_policy.get_filename_suffix()
+            name = name + self.file_save_policy.get_filename_suffix()
 
         return super().save(name, content, max_length)
