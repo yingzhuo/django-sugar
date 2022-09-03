@@ -12,6 +12,7 @@ r"""
 from jwt import unregister_algorithm, register_algorithm, algorithms
 
 from .auth import *
+from .filesstorage import *
 from .http import *
 from .jwtalg import *
 from .pwdencoder import *
