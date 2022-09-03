@@ -15,7 +15,6 @@ import re
 from django_sugar import lang
 
 
-# I like spring-security
 class PasswordEncoder(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
@@ -108,7 +107,6 @@ class ReversePasswordEncoder(PasswordEncoder):
 
 _INNER_ENCODERS = {
     'noop': NoopPasswordEncoder(ignore_cases=False),
-    'noop_ci': NoopPasswordEncoder(ignore_cases=True),
     'md4': MD4PasswordEncoder(),
     'md5': MD5PasswordEncoder(),
     'sha1': SHA1PasswordEncoder(),

@@ -38,17 +38,3 @@ def random_uuid(*, remove_hyphen=False):
     :return: uuid
     """
     return random_uuid32() if remove_hyphen else random_uuid36()
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-def _uuid_generator_factory(*, remove_hyphen=False):
-    while True:
-        yield random_uuid(remove_hyphen=remove_hyphen)
-
-
-"""36位UUID生成器实例"""
-UUID36_GENERATOR = _uuid_generator_factory(remove_hyphen=False)
-
-"""32位UUID生成器实例"""
-UUID32_GENERATOR = _uuid_generator_factory(remove_hyphen=True)
