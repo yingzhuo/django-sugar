@@ -12,6 +12,17 @@ r"""
 import hashlib
 
 
+def md4(string, *, charset='utf-8'):
+    """
+    md4哈希
+
+    :param string: 字符串
+    :param charset: 字符串encoding字符集
+    :return: 结果
+    """
+    return hashlib.new("md4", string.encode(charset)).hexdigest().lower()
+
+
 def md5(string, *, charset='utf-8'):
     """
     md5哈希
