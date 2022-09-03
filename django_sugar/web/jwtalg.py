@@ -77,6 +77,9 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
         生成密钥文件 (with passphrase)
         openssl genrsa -aes256 -passout pass:<passphrase> -out rsa_aes_private.key 2048
         openssl rsa -in rsa_aes_private.key -passin pass:<passphrase> -pubout -out rsa_public.key
+
+    参考:
+        https://www.wpoven.com/tools/
     """
 
     def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):
@@ -84,9 +87,9 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
         if alg_name not in {'RS256', 'RS384', 'RS512', 'PS256', 'PS384', 'PS512'}:
             raise ValueError(f"Algorithm '{alg_name} not supported.")
 
-        public_key = lang.to_bytes_if_necessary(public_key)
-        private_key = lang.to_bytes_if_necessary(private_key)
-        passphrase = lang.to_bytes_if_necessary(passphrase)
+        public_key = lang.ensure_bytes(public_key)
+        private_key = lang.ensure_bytes(private_key)
+        passphrase = lang.ensure_bytes(passphrase)
 
         if passphrase is not None:
             private_key = serialization.load_pem_private_key(private_key,
@@ -113,15 +116,25 @@ class EcdsaAlgorithm(JwtAlgorithmAndKey):
         生成密钥文件:
         openssl ecparam -name prime256v1 -genkey -noout -out ecdsa_private.key
         openssl ec -in ecdsa_private.key -pubout -out ecdsa_public.key
+
+    参考:
+        https://www.wpoven.com/tools/
     """
 
-    def __init__(self, alg_name=None, *, public_key, private_key):
+    def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):
         alg_name = alg_name or 'ES256K'
         if alg_name not in {'ES256', 'ES256K', 'ES384', 'ES521', 'ES512'}:
             raise ValueError(f"Algorithm '{alg_name} not supported.")
 
-        public_key = lang.to_bytes_if_necessary(public_key)
-        private_key = lang.to_bytes_if_necessary(private_key)
+        public_key = lang.ensure_bytes(public_key)
+        private_key = lang.ensure_bytes(private_key)
+        passphrase = lang.ensure_bytes(passphrase)
+
+        if passphrase is not None:
+            private_key = serialization.load_pem_private_key(private_key,
+                                                             password=passphrase,
+                                                             backend=default_backend())
+
         self._algorithm_name = alg_name
         self._public_key = public_key
         self._private_key = private_key
@@ -131,6 +144,35 @@ class EcdsaAlgorithm(JwtAlgorithmAndKey):
         return self._private_key
 
     @property
+    def decoding_secret_key(self):
+        return self._public_key
+
+
+class Ed25519Algorithm(JwtAlgorithmAndKey):
+    """
+    ED25519签名算法
+
+    参考:
+        https://www.wpoven.com/tools/
+    """
+
+    def __init__(self, *, public_key, private_key, passphrase=None):
+        public_key = lang.ensure_bytes(public_key)
+        private_key = lang.ensure_bytes(private_key)
+        passphrase = lang.ensure_bytes(passphrase)
+
+        if passphrase is not None:
+            private_key = serialization.load_pem_private_key(private_key,
+                                                             password=passphrase,
+                                                             backend=default_backend())
+
+        self._algorithm_name = 'EdDSA'
+        self._public_key = public_key
+        self._private_key = private_key
+
+    def encoding_secret_key(self):
+        return self._private_key
+
     def decoding_secret_key(self):
         return self._public_key
 
@@ -193,21 +235,25 @@ def create_ps512_algorithm(public_key, private_key, passphrase=None):
     return RsaAlgorithm('PS512', public_key=public_key, private_key=private_key, passphrase=passphrase)
 
 
-def create_es256_algorithm(public_key, private_key):
-    return EcdsaAlgorithm('ES256', public_key=public_key, private_key=private_key)
+def create_es256_algorithm(public_key, private_key, passphrase=None):
+    return EcdsaAlgorithm('ES256', public_key=public_key, private_key=private_key, passphrase=passphrase)
 
 
-def create_es256k_algorithm(public_key, private_key):
-    return EcdsaAlgorithm('ES256K', public_key=public_key, private_key=private_key)
+def create_es256k_algorithm(public_key, private_key, passphrase=None):
+    return EcdsaAlgorithm('ES256K', public_key=public_key, private_key=private_key, passphrase=passphrase)
 
 
-def create_es384_algorithm(public_key, private_key):
-    return EcdsaAlgorithm('ES384', public_key=public_key, private_key=private_key)
+def create_es384_algorithm(public_key, private_key, passphrase=None):
+    return EcdsaAlgorithm('ES384', public_key=public_key, private_key=private_key, passphrase=passphrase)
 
 
-def create_es521_algorithm(public_key, private_key):
-    return EcdsaAlgorithm('ES521', public_key=public_key, private_key=private_key)
+def create_es521_algorithm(public_key, private_key, passphrase=None):
+    return EcdsaAlgorithm('ES521', public_key=public_key, private_key=private_key, passphrase=passphrase)
 
 
-def create_es512_algorithm(public_key, private_key):
-    return EcdsaAlgorithm('ES512', public_key=public_key, private_key=private_key)
+def create_es512_algorithm(public_key, private_key, passphrase=None):
+    return EcdsaAlgorithm('ES512', public_key=public_key, private_key=private_key, passphrase=passphrase)
+
+
+def create_ed25519_algorithm(public_key, private_key, passphrase=None):
+    return Ed25519Algorithm(public_key=public_key, private_key=private_key, passphrase=passphrase)

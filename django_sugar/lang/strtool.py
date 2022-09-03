@@ -11,7 +11,7 @@ r"""
 """
 
 
-def to_bytes_if_necessary(string, *, charset='utf-8'):
+def ensure_bytes(string, *, charset='utf-8'):
     """
     如有必要，转换成bytes类型
 
