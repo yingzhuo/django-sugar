@@ -16,7 +16,7 @@ import jwt
 from jwt import exceptions
 
 from django_sugar import lang
-from django_sugar.web import token
+from django_sugar.web import token, jwt_algorithm
 
 
 class JwtTokenParser(token.BearerTokenResolver):
@@ -103,7 +103,7 @@ class MissingRequiredClaimException(JWTException):
 
 class JwtTokenBasedUserFinder(token.TokenBasedUserFinder):
     # 签名算法与密钥
-    jwt_algorithm_and_key = jwtalg.HmacAlgorithm(key='django-sugar')
+    jwt_algorithm_and_key = jwt_algorithm.HmacAlgorithm(key='django-sugar')
 
     # 是否要验证JWT的签名
     jwt_verify_signature = True
@@ -207,7 +207,7 @@ class JwtTokenGenerator(token.TokenGenerator, metaclass=abc.ABCMeta):
     """
 
     # 加密key
-    jwt_algorithm_and_key = jwtalg.HmacAlgorithm(key='django-sugar')
+    jwt_algorithm_and_key = jwt_algorithm.HmacAlgorithm(key='django-sugar')
 
     def generate_token(self, user, **kwargs):
         jwt_payload = self.user_to_jwt_payload(user)
