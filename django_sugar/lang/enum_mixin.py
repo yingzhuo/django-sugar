@@ -14,7 +14,7 @@ import typing
 from django_sugar.lang import strtool
 
 
-class ChoicesType(object):
+class EnumMixin(object):
     """
     枚举类辅助工具
 
@@ -22,9 +22,9 @@ class ChoicesType(object):
     """
 
     @classmethod
-    def choices(cls):
+    def tuple_list(cls):
         if isinstance(cls, typing.Iterable):
-            return [(m.name, m.value) for m in cls]
+            return [(m.value, m.name) for m in cls]
         else:
             raise TypeError("'%s' isn't iterable" % cls.__name__)
 

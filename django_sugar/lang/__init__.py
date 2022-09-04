@@ -10,8 +10,8 @@ r"""
 
 """
 from .base64 import *
-from .choices import *
 from .codec import *
+from .enum_mixin import *
 from .io import *
 from .random import *
 from .reflection import *
