@@ -12,10 +12,10 @@ r"""
 from jwt import unregister_algorithm, register_algorithm, algorithms
 
 from .auth import *
-from .filesstorage import *
+from .file_storage import *
 from .http import *
-from .jwtalg import *
-from .pwdencoder import *
+from .jwt_algorithm import *
+from .pwd_encoder import *
 from .token import *
 from .token_jwt import *
 

@@ -16,7 +16,7 @@ import jwt
 from jwt import exceptions
 
 from django_sugar import lang
-from django_sugar.web import token, jwtalg
+from django_sugar.web import token
 
 
 class JwtTokenParser(token.BearerTokenResolver):
