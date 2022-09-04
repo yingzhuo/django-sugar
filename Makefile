@@ -1,3 +1,4 @@
+timestamp := $(shell /bin/date "+%F %T")
 
 usage:
 	@echo "======================================================================"
@@ -13,5 +14,5 @@ github:
 	@pip3 freeze > $(CURDIR)/requirements.txt
 	@git status
 	@git add .
-	@git commit -m 'update'
+	@git commit -m "$(timestamp)"
 	@git push
