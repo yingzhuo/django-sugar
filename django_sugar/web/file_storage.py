@@ -24,7 +24,7 @@ class FileSavePolicy(object):
 
     def __init__(self, *,
                  prefix_application='',
-                 prefix_timestamp_format='%F',  # '%F' = '%Y-%m-%d'
+                 prefix_timestamp_format='%F',
                  suffix=None,
                  ):
         self._prefix_timestamp_format = prefix_timestamp_format

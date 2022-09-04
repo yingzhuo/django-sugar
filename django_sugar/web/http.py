@@ -9,10 +9,12 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
+import re
+
 from django_sugar import lang
 
 
-def get_client_sent_data(request, /, *, default_values=None, **kwargs):
+def get_client_sent_data(request, *, default_values=None, **kwargs):
     """
     合并请求提交的数据
 
@@ -36,6 +38,17 @@ def get_client_sent_data(request, /, *, default_values=None, **kwargs):
             data[k] = v[-1]
 
     return data
+
+
+def maybe_spider(request):
+    user_agent = request.headers.get('User-Agent', None)
+    if not user_agent:
+        return False
+
+    regex = r"qihoobot|Baiduspider|Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|" \
+            r"Adsbot-Google|Feedfetcher-Google|Yahoo! Slurp|Yahoo! Slurp China|YoudaoBot|Sosospider|" \
+            r"Sogou spider|Sogou web spider|MSNBot|ia_archiver|Tomato Bot"
+    return bool(re.search(regex, user_agent))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
