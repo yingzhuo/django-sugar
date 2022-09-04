@@ -10,6 +10,7 @@ r"""
 
 """
 import datetime
+import typing
 
 from django.core import exceptions
 from django.core.files import storage
@@ -21,9 +22,14 @@ class FileSavePolicy(object):
     文件保存策略
     """
 
-    def __init__(self, *, prefix_application='', prefix_timestamp_format='%Y-%m-%d'):
+    def __init__(self, *,
+                 prefix_application='',
+                 prefix_timestamp_format='%Y-%m-%d',
+                 suffix=None,
+                 ):
         self._prefix_timestamp_format = prefix_timestamp_format
         self._prefix_application = prefix_application
+        self._suffix = suffix
 
     def get_filename_prefix(self):
         ret = ''
@@ -40,8 +46,12 @@ class FileSavePolicy(object):
         return ret
 
     def get_filename_suffix(self):
-        # TODO
-        return ''
+        if isinstance(self._suffix, str):
+            return self._suffix
+        elif isinstance(self._suffix, typing.Callable):
+            return str(self._suffix())
+        else:
+            return ''
 
 
 class SmartFileSystemFileStorage(storage.FileSystemStorage):
