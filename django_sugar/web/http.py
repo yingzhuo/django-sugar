@@ -9,9 +9,11 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
+import logging
 import re
 from typing import List
 
+from django.utils import deprecation
 from rest_framework.response import Response
 
 
@@ -165,3 +167,20 @@ class HttpRequestDescriptor(object):
 
     def __repr__(self):
         return str(self)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class RequestLoggingMiddleware(deprecation.MiddlewareMixin):
+    """
+    请求日志记录中间件
+    """
+
+    def process_request(self, request):
+        descriptor = HttpRequestDescriptor(request)
+        logging.debug('-' * 120)
+        for msg in descriptor.get_detail():
+            logging.debug(msg)
+        logging.debug('-' * 120)
+        return self.get_response(request)
