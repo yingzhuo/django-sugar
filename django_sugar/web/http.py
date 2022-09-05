@@ -28,7 +28,7 @@ def merge_client_data(request, *, squeeze=True, default_values: dict = None, **k
     ret = {
         **default_values,
         **kwargs,
-        **request.query_params,
+        **request.GET,
         **request.data,
     }
 
@@ -107,7 +107,7 @@ class HttpRequestDescriptor(object):
 
     def get_query_params(self):
         return {
-            **self._request.query_params
+            **self._request.GET,
         }
 
     @property
