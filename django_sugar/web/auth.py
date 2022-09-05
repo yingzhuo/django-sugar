@@ -28,7 +28,7 @@ class Authenticator(authentication.BaseAuthentication, metaclass=abc.ABCMeta):
         """
         认证一个请求
         :param request: 请求实例
-        :return: 用户对象
+        :return: 认证成功时返回二元组(User, Token) 否则返回None
         """
 
     def authenticate_header(self, request):
@@ -36,6 +36,10 @@ class Authenticator(authentication.BaseAuthentication, metaclass=abc.ABCMeta):
 
 
 class TokenBasedAuthenticator(Authenticator):
+    """
+    基于令牌的认证器
+    """
+
     # 解析令牌时发生异常是否抛出
     raise_if_token_resolving_error = True
 
@@ -47,7 +51,7 @@ class TokenBasedAuthenticator(Authenticator):
         resolve_token = lang.get_callable_attr(self,
                                                'resolve_token',
                                                raise_error=True,
-                                               error_msg='forgot TokenResolver mixin?')
+                                               error_msg='Forgot TokenResolver mixin?')
 
         # noinspection PyBroadException
         try:
@@ -64,7 +68,7 @@ class TokenBasedAuthenticator(Authenticator):
         get_user_by_token = lang.get_callable_attr(self,
                                                    'get_user_by_token',
                                                    raise_error=True,
-                                                   error_msg='forgot TokenBasedUserFinder mixin?')
+                                                   error_msg='Forgot TokenBasedUserFinder mixin?')
 
         # noinspection PyBroadException
         try:

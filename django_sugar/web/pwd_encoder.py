@@ -149,6 +149,15 @@ except Exception:
 class DelegatingPasswordEncoder(PasswordEncoder):
     encoding_algorithm = 'bcrypt' if _BCRYPT_PRESENT else 'md5'
 
+    def __len__(self):
+        return len(_INNER_ENCODERS)
+
+    def __iter__(self):
+        return iter(_INNER_ENCODERS)
+
+    def is_supported(self, alg_name):
+        return alg_name in _INNER_ENCODERS
+
     def encode_password(self, raw_password):
         alg_id = self.encoding_algorithm
         encoder = _INNER_ENCODERS.get(alg_id)
