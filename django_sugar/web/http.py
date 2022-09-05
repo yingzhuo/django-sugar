@@ -12,6 +12,8 @@ r"""
 import re
 from typing import List
 
+from rest_framework.response import Response
+
 
 def merge_client_data(request, *, squeeze=True, default_values: dict = None, **kwargs):
     """
@@ -41,12 +43,12 @@ def merge_client_data(request, *, squeeze=True, default_values: dict = None, **k
     return ret
 
 
-def bind_request_data(request, serializer_classes, *, squeeze=True, default_values: dict = None, **kwargs):
+def bind_request_data(request, serializer_class, *, squeeze=True, default_values: dict = None, **kwargs):
     """
     绑定请求数据
 
     :param request: 请求对象
-    :param serializer_classes: 序列化器类型
+    :param serializer_class: 序列化器类型
     :param squeeze: 当结果value包含多个值时，是否只去最后一个值
     :param default_values: 可以设置一些缺省值
     :param kwargs: 其他参数
@@ -54,9 +56,25 @@ def bind_request_data(request, serializer_classes, *, squeeze=True, default_valu
     """
 
     data = merge_client_data(request, squeeze=squeeze, default_values=default_values, **kwargs)
-    serializer = serializer_classes(data=data)
+    serializer = serializer_class(data=data)
     serializer.is_valid(raise_exception=True)
     return serializer.validated_data
+
+
+def serialize_data_to_response(data, serializer_class=None, *, many=False, **kwargs):
+    """
+    序列化数据到response对象
+
+    :param data: 待序列化的数据
+    :param serializer_class: 序列化器类型
+    :param many: 是否序列化多个元素
+    :return: Response实例
+    """
+
+    if serializer_class:
+        serializer = serializer_class(instance=data, many=many, **kwargs)
+        data = serializer.data
+    return Response(data=data)
 
 
 def maybe_spider(request):

@@ -15,7 +15,7 @@ import django_sugar as sugar
 
 setup(
     name='django_sugar',
-    version=sugar.__version__,
+    version=sugar.VERSION,
     author='应卓',
     author_email='yingzhor@gmail.com',
     url=r'https://github.com/yingzhuo/django-sugar',
