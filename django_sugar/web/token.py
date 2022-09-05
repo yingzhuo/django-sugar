@@ -102,22 +102,6 @@ class BasicTokenResolver(HeaderTokenResolver):
             return None, None
 
 
-class FixedTokenResolver(TokenResolver):
-    """
-    令牌解析器具体实现
-
-    总是解析出固定的令牌
-    """
-    fixed_token = None
-
-    def __init__(self, **kwargs):
-        if self.fixed_token is None:
-            self.fixed_token = kwargs.get('fixed_token', None)
-
-    def resolve_token(self, request, **kwargs):
-        return self.fixed_token
-
-
 class CompositeTokenResolver(TokenResolver):
     """
     复合型令牌解析器

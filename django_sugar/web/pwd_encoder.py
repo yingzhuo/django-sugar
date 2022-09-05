@@ -175,6 +175,8 @@ class DelegatingPasswordEncoder(PasswordEncoder):
     @staticmethod
     def _get_alg_and_real_encoded_password(encoded_password):
         alg = re.sub(r'^{([a-z0-9_]+)}.*$', r'\1', encoded_password)
+
+        # 不是 '{alg_name}xxx' 格式的密码，当noop处理
         if alg == encoded_password:
             return 'noop', encoded_password
         return alg, re.sub(r'^{[a-z0-9_]+}(.*)$', r'\1', encoded_password)

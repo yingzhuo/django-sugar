@@ -10,7 +10,7 @@ r"""
 
 """
 import re
-from typing import Sequence, Tuple, List, Set
+from typing import List
 
 
 def merge_client_data(request, *, squeeze=True, default_values: dict = None, **kwargs):
@@ -34,11 +34,29 @@ def merge_client_data(request, *, squeeze=True, default_values: dict = None, **k
 
     if squeeze:
         for k, v in ret.items():
-            if isinstance(v, (List, Set, Tuple, Sequence)):
+            if isinstance(v, List):
                 v = list[-1]
                 ret.update({k: v})
 
     return ret
+
+
+def bind_request_data(request, serializer_classes, *, squeeze=True, default_values: dict = None, **kwargs):
+    """
+    绑定请求数据
+
+    :param request: 请求对象
+    :param serializer_classes: 序列化器类型
+    :param squeeze: 当结果value包含多个值时，是否只去最后一个值
+    :param default_values: 可以设置一些缺省值
+    :param kwargs: 其他参数
+    :return: 合并后的数据(字典)
+    """
+
+    data = merge_client_data(request, squeeze=squeeze, default_values=default_values, **kwargs)
+    serializer = serializer_classes(data=data)
+    serializer.is_valid(raise_exception=True)
+    return serializer.validated_data
 
 
 def maybe_spider(request):
