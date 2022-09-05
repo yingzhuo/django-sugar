@@ -75,8 +75,8 @@ class RsaAlgorithm(JwtAlgorithmAndKey):
         openssl rsa -in rsa_private.key -pubout -out rsa_public.key
 
         生成密钥文件 (with passphrase)
-        openssl genrsa -aes256 -passout pass:<passphrase> -out rsa_aes_private.key 2048
-        openssl rsa -in rsa_aes_private.key -passin pass:<passphrase> -pubout -out rsa_public.key
+        openssl genrsa -aes256 -passout pass:<passphrase> -out rsa_private.key 2048
+        openssl rsa -in rsa_private.key -passin pass:<passphrase> -pubout -out rsa_public.key
     """
 
     def __init__(self, alg_name=None, *, public_key, private_key, passphrase=None):

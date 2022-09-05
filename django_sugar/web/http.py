@@ -10,37 +10,46 @@ r"""
 
 """
 import re
+from typing import Sequence, Tuple, List, Set
 
-from django_sugar import lang
 
-
-def get_client_sent_data(request, *, default_values=None, **kwargs):
+def merge_client_data(request, *, squeeze=True, default_values: dict = None, **kwargs):
     """
     合并请求提交的数据
 
     :param request: 请求对象
+    :param squeeze: 当结果value包含多个值时，是否只去最后一个值
     :param default_values: 可以设置一些缺省值
     :param kwargs: 其他参数
     :return: 合并后的数据(字典)
     """
     default_values = default_values or dict()
 
-    data = {
+    ret = {
         **default_values,
         **kwargs,
         **request.query_params,
         **request.data,
     }
 
-    for k in data:
-        v = data[k]
-        if lang.is_list(v):
-            data[k] = v[-1]
+    if squeeze:
+        for k, v in ret.items():
+            if isinstance(v, (List, Set, Tuple, Sequence)):
+                v = list[-1]
+                ret.update({k: v})
 
-    return data
+    return ret
 
 
 def maybe_spider(request):
+    """
+    测试请求是否有可能是有蜘蛛/爬虫发起
+
+    本函数参数仅作为参考
+
+    :param request: 请求对象
+    :return: 有可能是爬虫时返回True
+    """
     user_agent = request.headers.get('User-Agent', None)
     if not user_agent:
         return False
@@ -50,8 +59,6 @@ def maybe_spider(request):
             r"Sogou spider|Sogou web spider|MSNBot|ia_archiver|Tomato Bot"
     return bool(re.search(regex, user_agent))
 
-
-# ----------------------------------------------------------------------------------------------------------------------
 
 class HttpRequestDescriptor(object):
     """
@@ -65,25 +72,29 @@ class HttpRequestDescriptor(object):
         构造方法
         :param request: 请求对象
         """
-        self.request = request
+        self._request = request
 
     def get_base_info(self):
         return {
-            'schema': self.request.scheme,
-            'is_secure': self.request.is_secure(),
-            'method': self.request.method,
-            'path': self.request.path,
+            'schema': self._request.scheme,
+            'is_secure': self._request.is_secure(),
+            'method': self._request.method,
+            'path': self._request.path,
         }
 
     def get_headers(self):
         return {
-            **self.request.headers,
+            **self._request.headers,
         }
 
     def get_query_params(self):
         return {
-            **self.request.GET
+            **self._request.query_params
         }
+
+    @property
+    def native_request(self):
+        return self._request
 
     def get_detail(self):
         d = list()
@@ -95,7 +106,7 @@ class HttpRequestDescriptor(object):
 
         # 元信息
         d.append("Meta:")
-        for name, content in self.request.META.items():
+        for name, content in self._request.META.items():
             if name.startswith('HTTP_') or name in ['REMOTE_ADDR']:
                 d.append("\t%s => %s" % (name, content))
 
