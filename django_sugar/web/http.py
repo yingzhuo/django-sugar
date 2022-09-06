@@ -135,32 +135,32 @@ class HttpRequestDescriptor(object):
         return self._request
 
     def get_detail(self):
-        d = list()
+        ret = list()
 
         # 基本信息
-        d.append("Base Information:")
+        ret.append("Base Information:")
         for name, content in self.get_base_info().items():
-            d.append("\t%s => %s" % (name, content))
+            ret.append("\t%s => %s" % (name, content))
 
         # 元信息
-        d.append("Meta:")
+        ret.append("Meta:")
         for name, content in self._request.META.items():
             if name.startswith('HTTP_') or name in ['REMOTE_ADDR']:
-                d.append("\t%s => %s" % (name, content))
+                ret.append("\t%s => %s" % (name, content))
 
         # 请求头
         if len(self.get_headers()) > 0:
-            d.append("Headers:")
+            ret.append("Headers:")
             for name, value in self.get_headers().items():
-                d.append("\t%s => %s" % (name, value))
+                ret.append("\t%s => %s" % (name, value))
 
         # query参数
         if len(self.get_query_params()):
-            d.append("Query Dict:")
+            ret.append("Query Dict:")
             for k, v in self.get_query_params().items():
-                d.append("\t%s => %s" % (k, v))
+                ret.append("\t%s => %s" % (k, v))
 
-        return d
+        return ret
 
     def __str__(self):
         return '\n'.join(self.get_detail())
