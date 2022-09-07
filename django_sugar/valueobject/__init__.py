@@ -10,6 +10,7 @@ r"""
 
 """
 from .color import *
+from .datedesc import *
 from .daterange import *
 from .intrange import *
 from .intrangecollection import *
