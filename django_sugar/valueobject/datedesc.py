@@ -31,15 +31,22 @@ class DateDescriptor(object):
 
     @staticmethod
     def is_valid_string(string, *, date_format='%Y-%m-%d'):
-        # noinspection PyBroadException
         try:
             DateDescriptor.from_string(string, date_format=date_format)
             return True
-        except Exception:
+        except ValueError:
             return False
 
     def __init__(self, dt):
         self._date = self._ensure_date(dt)
+
+    @property
+    def date(self):
+        return self._date
+
+    @property
+    def datetime(self):
+        return datetime.datetime.combine(self._date, datetime.time())
 
     def _ensure_date(self, dt):
         if isinstance(dt, datetime.datetime):
