@@ -9,9 +9,9 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from .color import *
-from .datedesc import *
-from .daterange import *
-from .intrange import *
-from .intrangecollection import *
-from .password import *
+from .color import Color, ColorField
+from .datedesc import DateDescriptor, DateDescriptorField
+from .daterange import DateRange, DateRangeField
+from .intrange import IntRange, IntRangeField
+from .intrangecollection import IntRangeCollection, IntRangeCollectionField
+from .password import PasswordField

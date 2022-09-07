@@ -12,6 +12,8 @@ r"""
 import datetime
 import math
 
+from django_sugar.valueobject import abstractfield
+
 
 class DateDescriptor(object):
     """
@@ -26,6 +28,15 @@ class DateDescriptor(object):
     def from_string(string, *, date_format='%Y-%m-%d'):
         dt = datetime.datetime.strptime(string, date_format)
         return DateDescriptor(dt)
+
+    @staticmethod
+    def is_valid_string(string, *, date_format='%Y-%m-%d'):
+        # noinspection PyBroadException
+        try:
+            DateDescriptor.from_string(string, date_format=date_format)
+            return True
+        except Exception:
+            return False
 
     def __init__(self, dt):
         self._date = self._ensure_date(dt)
@@ -143,3 +154,27 @@ class DateDescriptor(object):
             return self.iso_weekday
         else:
             return weekday_mapping[self.iso_weekday]
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+class DateDescriptorField(abstractfield.AbstractField):
+    """
+    日期描述器Field
+
+    用于序列化器
+    """
+
+    default_error_messages = {
+        'invalid': "Invalid string format for 'DateDescriptor'",
+    }
+
+    def __init__(self, *, date_format='%Y-%m-%d', **kwargs):
+        self.date_format = date_format
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        if not DateDescriptor.from_string(data, date_format=self.date_format):
+            self.fail('invalid')
+        else:
+            return DateDescriptor.from_string(data, date_format=self.date_format)
