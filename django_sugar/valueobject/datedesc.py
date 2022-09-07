@@ -18,9 +18,17 @@ class DateDescriptor(object):
     日期描述器
     """
 
+    @staticmethod
+    def today():
+        return DateDescriptor(datetime.date.today())
+
+    @staticmethod
+    def from_string(string, *, date_format='%Y-%m-%d'):
+        dt = datetime.datetime.strptime(string, date_format)
+        return DateDescriptor(dt)
+
     def __init__(self, dt):
         self._date = self._ensure_date(dt)
-        pass
 
     def _ensure_date(self, dt):
         if isinstance(dt, datetime.datetime):
@@ -28,13 +36,71 @@ class DateDescriptor(object):
         elif isinstance(dt, datetime.date):
             return dt
         else:
-            raise TypeError("Expect 'datetime.datetime' or 'datetime.date', but got %s", type(dt).__name__)
+            msg = "Incorrect type! Expected type 'datetime.datetime' or 'datetime.date', but got '%s'" % \
+                  type(dt).__name__
+            raise TypeError(msg)
 
     def __str__(self):
         return str(self._date)
 
     def __repr__(self):
         return str(self._date)
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            new_date = self._date + datetime.timedelta(days=other)
+            return DateDescriptor(new_date)
+        else:
+            raise TypeError('type not supported')
+
+    def __iadd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        if isinstance(other, int):
+            new_date = self._date - datetime.timedelta(days=other)
+            return DateDescriptor(new_date)
+        else:
+            raise TypeError('type not supported')
+
+    def __isub__(self, other):
+        return self.__sub__(other)
+
+    def __gt__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date > other._date
+        else:
+            raise TypeError('type not supported')
+
+    def __ge__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date >= other._date
+        else:
+            raise TypeError('type not supported')
+
+    def __lt__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date < other._date
+        else:
+            raise TypeError('type not supported')
+
+    def __le__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date <= other._date
+        else:
+            raise TypeError('type not supported')
+
+    def __eq__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date == other._date
+        else:
+            raise TypeError('type not supported')
+
+    def __ne__(self, other):
+        if isinstance(other, DateDescriptor):
+            return self._date != other._date
+        else:
+            raise TypeError('type not supported')
 
     @property
     def year(self):
