@@ -22,15 +22,34 @@ class DateDescriptor(object):
 
     @staticmethod
     def today():
+        """
+        创建今日的实例
+
+        :return: 今日的实例
+        """
         return DateDescriptor(datetime.date.today())
 
     @staticmethod
     def from_string(string, *, date_format='%Y-%m-%d'):
+        """
+        字符串解析成DateDescriptor的实例
+
+        :param string: 字符串
+        :param date_format: 格式字符串
+        :return: 实例
+        """
         dt = datetime.datetime.strptime(string, date_format)
         return DateDescriptor(dt)
 
     @staticmethod
     def is_valid_string(string, *, date_format='%Y-%m-%d'):
+        """
+        测试字符串是否可以转换成DateDescriptor的实例
+
+        :param string: 字符串
+        :param date_format: 格式字符串
+        :return: 可以转换时返回True
+        """
         try:
             DateDescriptor.from_string(string, date_format=date_format)
             return True
@@ -156,6 +175,12 @@ class DateDescriptor(object):
     def iso_weekday(self):
         return self._date.isoweekday()
 
+    @property
+    def week_range_string(self):
+        start = self._date - datetime.timedelta(days=self._date.weekday() + 1)
+        end = start + datetime.timedelta(days=6)
+        return str(start) + "@@" + str(end)
+
     def get_weekday_str(self, weekday_mapping=None):
         if not weekday_mapping:
             return self.iso_weekday
@@ -173,15 +198,30 @@ class DateDescriptorField(abstractfield.AbstractField):
     """
 
     default_error_messages = {
-        'invalid': "Invalid string format for 'DateDescriptor'",
+        'invalid': "Invalid string format for 'DateDescriptor'.",
+        'past': "DateDescriptor must be past.",
+        'future': "DateDescriptor must be future.",
     }
 
-    def __init__(self, *, date_format='%Y-%m-%d', **kwargs):
+    def __init__(self, *, date_format='%Y-%m-%d', past=False, future=False, **kwargs):
         self.date_format = date_format
+        self.past = past
+        self.future = future
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         if not DateDescriptor.from_string(data, date_format=self.date_format):
             self.fail('invalid')
         else:
-            return DateDescriptor.from_string(data, date_format=self.date_format)
+            dd = DateDescriptor.from_string(data, date_format=self.date_format)
+
+            today = DateDescriptor.today()
+            if self.past:
+                if dd >= today:
+                    self.fail('past')
+
+            if self.future:
+                if dd <= today:
+                    self.fail('future')
+
+            return dd
