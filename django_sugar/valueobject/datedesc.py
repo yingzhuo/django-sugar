@@ -56,8 +56,9 @@ class DateDescriptor(object):
         except ValueError:
             return False
 
-    def __init__(self, dt):
+    def __init__(self, dt, *, date_format='%Y-%m-%d'):
         self._date = self._ensure_date(dt)
+        self._date_format = date_format
 
     @property
     def date(self):
@@ -78,17 +79,17 @@ class DateDescriptor(object):
             raise TypeError(msg)
 
     def __str__(self):
-        return str(self._date)
+        return self._date.strftime(self._date_format)
 
     def __repr__(self):
-        return str(self._date)
+        return self._date.strftime(self._date_format)
 
     def __add__(self, other):
         if isinstance(other, int):
             new_date = self._date + datetime.timedelta(days=other)
             return DateDescriptor(new_date)
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __iadd__(self, other):
         return self.__add__(other)
@@ -98,7 +99,7 @@ class DateDescriptor(object):
             new_date = self._date - datetime.timedelta(days=other)
             return DateDescriptor(new_date)
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __isub__(self, other):
         return self.__sub__(other)
@@ -107,37 +108,37 @@ class DateDescriptor(object):
         if isinstance(other, DateDescriptor):
             return self._date > other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __ge__(self, other):
         if isinstance(other, DateDescriptor):
             return self._date >= other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __lt__(self, other):
         if isinstance(other, DateDescriptor):
             return self._date < other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __le__(self, other):
         if isinstance(other, DateDescriptor):
             return self._date <= other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __eq__(self, other):
         if isinstance(other, DateDescriptor):
             return self._date == other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     def __ne__(self, other):
         if isinstance(other, DateDescriptor):
             return self._date != other._date
         else:
-            raise TypeError('type not supported')
+            raise TypeError('Type not supported.')
 
     @property
     def year(self):
@@ -179,7 +180,7 @@ class DateDescriptor(object):
     def week_range_string(self):
         start = self._date - datetime.timedelta(days=self._date.weekday() + 1)
         end = start + datetime.timedelta(days=6)
-        return str(start) + "@@" + str(end)
+        return start.strftime(self._date_format) + '@@' + end.strftime(self._date_format)
 
     def get_weekday_str(self, weekday_mapping=None):
         if not weekday_mapping:
