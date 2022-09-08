@@ -15,11 +15,22 @@ def ensure_bytes(string_or_bytes, *, charset='utf-8'):
     """
     如有必要，转换成bytes类型
 
-    :param string_or_bytes: 字符串
+    :param string_or_bytes: 字符串或字节数组
     :param charset: 字符串编码
     :return: 结果
     """
     return string_or_bytes.encode(charset) if isinstance(string_or_bytes, str) else string_or_bytes
+
+
+def ensure_string(string_or_bytes, *, charset='utf-8'):
+    """
+    如有必要，转换成str类型
+
+    :param string_or_bytes: 字符串或字节数组
+    :param charset: 字符串编码
+    :return: 结果
+    """
+    return str(string_or_bytes, charset) if isinstance(string_or_bytes, bytes) else string_or_bytes
 
 
 def is_empty_or_none(string):

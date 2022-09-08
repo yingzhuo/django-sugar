@@ -14,7 +14,7 @@ from jwt import unregister_algorithm, register_algorithm, algorithms
 from .auth import *
 from .file_storage import *
 from .http import *
-from .jwt_algorithm import *
+from .jwt_base import *
 from .pwd_encoder import *
 from .token import *
 from .token_jwt import *
