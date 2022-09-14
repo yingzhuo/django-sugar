@@ -6,6 +6,10 @@ venv/
 __pycache__/
 db.sqlite3
 
+# 发布相关
+dist/
+*.egg-info/
+
 # 其他
 .DS_Store
 *.bak
