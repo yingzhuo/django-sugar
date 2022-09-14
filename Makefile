@@ -20,6 +20,7 @@ github: clean
 
 clean:
 	@rm -rf $(CURDIR)/dist/
+	@rm -rf $(CURDIR)/build/
 	@rm -rf $(CURDIR)/*.egg-info/
 
 deploy-test: install-requires clean

@@ -8,6 +8,7 @@ db.sqlite3
 
 # 发布相关
 dist/
+build/
 *.egg-info/
 
 # 其他
