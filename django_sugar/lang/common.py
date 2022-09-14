@@ -9,13 +9,20 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from .base64 import *
-from .codec import *
-from .common import *
-from .enum_mixin import *
-from .io import *
-from .random import *
-from .reflection import *
-from .strtool import *
-from .typetest import *
-from .uuid import *
+import typing
+
+
+def ensure_list(obj):
+    if obj is None:
+        return None
+
+    if isinstance(obj, str):
+        return [obj]
+
+    if isinstance(obj, list):
+        return obj
+
+    if isinstance(obj, typing.Iterable):
+        return [x for x in obj]
+
+    return [obj]
