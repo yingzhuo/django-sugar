@@ -21,9 +21,9 @@ setup(
     url=r'https://github.com/yingzhuo/django-sugar',
     packages=find_packages(),
     install_requires=[
-        'django>=4.1',
+        'django>=4.1.1',
         'djangorestframework>=3.13.1',
         'PyJWT>=2.4.0',
-        'cryptography>=37.0.4',
+        'cryptography>=38.0.1',
     ],
 )

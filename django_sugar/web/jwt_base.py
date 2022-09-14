@@ -19,6 +19,10 @@ from django_sugar import lang
 
 class JsonWebTokenSignatureComponent(object, metaclass=abc.ABCMeta):
     """
+    JWT签名算法组件
+
+    本组件包含算法和签名key
+
     提示:
 
     生成密钥文件 (ECDSA):

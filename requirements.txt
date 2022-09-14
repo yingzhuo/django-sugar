@@ -1,8 +1,8 @@
 asgiref==3.5.2
 bcrypt==4.0.0
 cffi==1.15.1
-cryptography==37.0.4
-Django==4.1
+cryptography==38.0.1
+Django==4.1.1
 djangorestframework==3.13.1
 pycparser==2.21
 PyJWT==2.4.0
