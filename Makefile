@@ -6,6 +6,8 @@ usage:
 	@echo "install-requires : install requirements"
 	@echo "github           : push source code to github.com"
 	@echo "clean            : clean up project"
+	@echo "deploy-test      : deploy this shit to test.pypi.org"
+	@echo "deploy-prod      : deploy this shit to pypi.org"
 	@echo "======================================================================"
 
 install-requires:
@@ -26,3 +28,7 @@ clean:
 deploy-test: install-requires clean
 	@python3 setup.py sdist bdist_wheel
 	@twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+deploy-prod: install-requires clean
+	@python3 setup.py sdist bdist_wheel
+	@twine upload dist/*
