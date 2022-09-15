@@ -12,7 +12,7 @@ r"""
 import re
 
 __title__ = 'Django Sugar'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = '应卓'
 __license__ = 'Apache 2'
 
