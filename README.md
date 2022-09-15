@@ -3,12 +3,11 @@
 ### 安装
 
 ```sh
-# install
-pip3 install git+https://github.com/yingzhuo/django-sugar.git@main
+# 安装稳定版 (推荐)
+pip3 install django-sugar==0.1.0
 
-# install (upgrade)
-pip3 uninstall -y django-sugar && \
-  pip3 install git+https://github.com/yingzhuo/django-sugar.git@main
+# 安装开发版
+pip3 install git+https://github.com/yingzhuo/django-sugar.git@main
 ```
 
 ### 必要依赖
