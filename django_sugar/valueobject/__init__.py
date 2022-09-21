@@ -10,6 +10,5 @@ r"""
 
 """
 from .datedesc import calculate_age, DateDesc, DateDescField, DatePair, DatePairField
-from .intrange import IntRange, IntRangeField
-from .intrangecollection import IntRangeCollection, IntRangeCollectionField
+from .intpair import IntPair, IntPairField, IntPairList, IntPairListField
 from .password import PasswordField
