@@ -246,11 +246,11 @@ class DatePair(object):
     日期对
     """
 
-    def __init__(self, datepairstr, sep='@@'):
+    def __init__(self, datepairstr, sep='@@', *args, **kwargs):
         try:
             parts = datepairstr.split(sep=sep)
-            d1 = DateDesc(parts[0])
-            d2 = DateDesc(parts[1])
+            d1 = DateDesc(parts[0], *args, **kwargs)
+            d2 = DateDesc(parts[1], *args, **kwargs)
             self._start = min(d1, d2)
             self._end = max(d1, d2)
             self._sep = sep
