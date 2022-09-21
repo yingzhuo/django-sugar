@@ -273,6 +273,11 @@ class DatePair(object):
     def __contains__(self, item):
         return self.left <= item <= self.right
 
+    def __len__(self):
+        d2 = self.end.astype(datetime.date)
+        d1 = self.start.astype(datetime.date)
+        return (d2 - d1).days + 1
+
     def astype(self, target_type, map_func=None):
         if target_type == str:
             return str(self)
@@ -313,7 +318,6 @@ class DatePairField(abstractfield.AbstractField):
 
     用于序列化器
     """
-    delimiter = None
     default_error_messages = {
         'invalid': "Invalid string format for 'DatePair'.",
     }
@@ -324,6 +328,6 @@ class DatePairField(abstractfield.AbstractField):
 
     def to_internal_value(self, data):
         try:
-            return DatePair(data)
+            return DatePair(data, sep=self._sep)
         except ValueError:
             self.fail('invalid')
