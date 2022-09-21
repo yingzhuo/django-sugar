@@ -10,7 +10,7 @@ r"""
 
 """
 from .color import Color, ColorField
-from .datedesc import DateDescriptor, DateDescriptorField
+from .datelike import DateDesc, DateDescField
 from .daterange import DateRange, DateRangeField
 from .intrange import IntRange, IntRangeField
 from .intrangecollection import IntRangeCollection, IntRangeCollectionField
