@@ -9,7 +9,6 @@ r"""
     https://github.com/yingzhuo/django-sugar
 
 """
-from .color import Color, ColorField
 from .datedesc import calculate_age, DateDesc, DateDescField, DatePair, DatePairField
 from .intrange import IntRange, IntRangeField
 from .intrangecollection import IntRangeCollection, IntRangeCollectionField

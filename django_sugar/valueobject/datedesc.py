@@ -26,6 +26,10 @@ def calculate_age(birthdate):
     :param birthdate: 出生日期
     :return: 年龄
     """
+
+    if isinstance(birthdate, datetime.datetime):
+        birthdate = birthdate.date()
+
     today = datetime.date.today()
     one_or_zero = ((today.month, today.day) < (birthdate.month, birthdate.day))
     year_difference = today.year - birthdate.year
