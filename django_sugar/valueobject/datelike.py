@@ -76,6 +76,9 @@ class DateDesc(object):
     def __isub__(self, other):
         return self.__sub__(other)
 
+    def __hash__(self):
+        return hash(self._date)
+
     def __gt__(self, other):
         if isinstance(other, DateDesc):
             return self._date > other._date
@@ -133,6 +136,12 @@ class DateDesc(object):
             return self._date != other.date()
         if isinstance(other, datetime.date):
             return self._date != other
+        else:
+            raise TypeError('Type not supported.')
+
+    def __cmp__(self, other):
+        if isinstance(other, DateDesc):
+            return self._date.__cmp__(other._date)
         else:
             raise TypeError('Type not supported.')
 
@@ -226,5 +235,95 @@ class DateDescField(abstractfield.AbstractField):
                     self.fail('future')
 
             return dd
+        except ValueError:
+            self.fail('invalid')
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+class DatePair(object):
+    """
+    日期对
+    """
+
+    def __init__(self, datepairstr, sep='@@'):
+        try:
+            parts = datepairstr.split(sep=sep)
+            d1 = DateDesc(parts[0])
+            d2 = DateDesc(parts[1])
+            self._start = min(d1, d2)
+            self._end = max(d1, d2)
+            self._sep = sep
+        except ValueError:
+            msg = "Cannot parse '%s' as DatePair." % datepairstr
+            raise ValueError(msg)
+
+    def __str__(self):
+        return '%s%s%s' % (self._start, self._sep, self._end)
+
+    def __repr__(self):
+        return '%s%s%s' % (self._start, self._sep, self._end)
+
+    def __iter__(self):
+        x = self.left
+        while x <= self.right:
+            yield x
+            x += 1
+
+    def __contains__(self, item):
+        return self.left <= item <= self.right
+
+    def astype(self, target_type, map_func=None):
+        if target_type == str:
+            return str(self)
+        elif target_type == list:
+            ret = [x for x in self]
+            if map_func is not None:
+                return list(map(map_func, ret))
+            else:
+                return ret
+        elif target_type == set:
+            ret = set([x for x in self])
+            if map_func is not None:
+                return set(map(map_func, ret))
+            else:
+                return ret
+        else:
+            raise TypeError('Type not supported.')
+
+    @property
+    def start(self):
+        return self._start
+
+    left = start
+
+    @property
+    def end(self):
+        return self._end
+
+    right = end
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class DatePairField(abstractfield.AbstractField):
+    """
+    DatePair相关Field
+
+    用于序列化器
+    """
+    delimiter = None
+    default_error_messages = {
+        'invalid': "Invalid string format for 'DatePair'.",
+    }
+
+    def __init__(self, *, sep='@@', **kwargs):
+        self._sep = sep
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        try:
+            return DatePair(data)
         except ValueError:
             self.fail('invalid')
