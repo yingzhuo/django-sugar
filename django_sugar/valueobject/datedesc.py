@@ -21,7 +21,7 @@ from django_sugar.valueobject import abstractfield
 
 def calculate_age(birthdate):
     """
-    格局出生日期计算当前的年龄
+    通过出生日期计算当前的年龄
 
     :param birthdate: 出生日期
     :return: 年龄
@@ -236,7 +236,7 @@ class DateDescField(abstractfield.AbstractField):
     """
 
     default_error_messages = {
-        'invalid': "Invalid string format for 'DateDescriptor'.",
+        'invalid': 'Invalid string format.',
         'past': "DateDescriptor must be past.",
         'future': "DateDescriptor must be future.",
     }
@@ -272,16 +272,16 @@ class DatePair(object):
     注意: 这是前闭后闭区间
     """
 
-    def __init__(self, datepairstr, sep='@@', *args, **kwargs):
+    def __init__(self, string, sep='@@', *args, **kwargs):
         try:
-            parts = datepairstr.split(sep=sep)
+            parts = string.split(sep=sep)
             d1 = DateDesc(parts[0], *args, **kwargs)
             d2 = DateDesc(parts[1], *args, **kwargs)
             self._start = min(d1, d2)
             self._end = max(d1, d2)
             self._sep = sep
         except ValueError:
-            msg = "Cannot parse '%s' as DatePair." % datepairstr
+            msg = "Cannot parse '%s' as DatePair." % string
             raise ValueError(msg)
 
     def __str__(self):
@@ -345,7 +345,7 @@ class DatePairField(abstractfield.AbstractField):
     用于序列化器
     """
     default_error_messages = {
-        'invalid': "Invalid string format for 'DatePair'.",
+        'invalid': 'Invalid string format.',
     }
 
     def __init__(self, *, sep='@@', **kwargs):

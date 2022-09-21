@@ -88,7 +88,7 @@ class IntPairField(abstractfield.AbstractField):
     """
 
     default_error_messages = {
-        'invalid': "Invalid string format for 'IntPair'.",
+        'invalid': 'Invalid string format.',
     }
 
     def __init__(self, sep='@@', *args, **kwargs):
@@ -143,7 +143,7 @@ class IntPairListField(abstractfield.AbstractField):
     """
 
     default_error_messages = {
-        'invalid': "Invalid string format for 'IntPairList'.",
+        'invalid': 'Invalid string format.',
         'max_interval': 'There is a big interval between IntPair.',
     }
 
