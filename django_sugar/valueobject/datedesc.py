@@ -17,6 +17,23 @@ from dateutil.parser import parse, ParserError
 from django_sugar.valueobject import abstractfield
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+
+def calculate_age(birthdate):
+    """
+    格局出生日期计算当前的年龄
+
+    :param birthdate: 出生日期
+    :return: 年龄
+    """
+    today = datetime.date.today()
+    one_or_zero = ((today.month, today.day) < (birthdate.month, birthdate.day))
+    year_difference = today.year - birthdate.year
+    return year_difference - one_or_zero
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 class DateDesc(object):
     """
     日期描述器
@@ -201,6 +218,9 @@ class DateDesc(object):
         else:
             raise TypeError('Type not supported.')
 
+    def calculate_age_as_birthdate(self):
+        return calculate_age(self._date)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -244,6 +264,8 @@ class DateDescField(abstractfield.AbstractField):
 class DatePair(object):
     """
     日期对
+
+    注意: 这是前闭后闭区间
     """
 
     def __init__(self, datepairstr, sep='@@', *args, **kwargs):
